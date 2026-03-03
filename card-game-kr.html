@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ 비술의 격전</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+:root{--bg:#06080f;--bg2:#0d1120;--panel:#111827;--border:#1e2d40;--gold:#c9a227;--gold2:#f0c040;--text:#dde4ef;--dim:#6b7c9a;--fire:#ff4e1a;--water:#1ab8ff;--earth:#7ab83a;--wind:#a0e8e0;--shadow:#9b4dff;--light:#ffe066;--thunder:#f0e040;--ice:#80dfff;--nature:#50c060;--c1:#8fa0b0;--c2:#4da6ff;--c3:#cc44ff;--c4:#ffaa00}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden;user-select:none}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 0%,#0a1a3a 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 20% 100%,#0d0a1e 0%,transparent 50%),radial-gradient(ellipse 60% 40% at 80% 100%,#0a1808 0%,transparent 50%),var(--bg)}
+.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.screen.hidden{display:none}
+#lobby{background:linear-gradient(160deg,#0d1120,#06080f)}
+.logo{font-family:'Noto Serif KR',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:700;letter-spacing:.1em;background:linear-gradient(135deg,#c9a227,#fff8dc,#c9a227);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 18px #c9a22744)}50%{filter:drop-shadow(0 0 44px #c9a22799)}}
+.sub{color:var(--dim);font-size:.9rem;letter-spacing:.2em}
+.panel{background:rgba(17,24,39,.96);border:1px solid var(--border);border-radius:14px;padding:28px 40px;width:min(460px,90vw);display:flex;flex-direction:column;gap:13px;box-shadow:0 0 50px #00000088,inset 0 1px 0 #ffffff0a}
+.ig{display:flex;flex-direction:column;gap:4px}
+.ig label{font-size:.7rem;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+input[type=text]{background:#06080f;border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.88rem;padding:9px 13px;outline:none;transition:border-color .2s}
+input[type=text]:focus{border-color:var(--gold)}
+.btn{font-family:'Noto Sans KR',sans-serif;font-size:.82rem;font-weight:700;padding:10px 20px;border-radius:7px;border:none;cursor:pointer;transition:all .2s}
+.bp{background:linear-gradient(135deg,#9a7a12,#c9a227,#dbb830);color:#1a1200;box-shadow:0 4px 18px #c9a22744}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 28px #c9a22766}
+.bs{background:transparent;border:1px solid var(--border);color:var(--dim)}
+.bs:hover{border-color:var(--gold);color:var(--gold)}
+.btn:active{transform:scale(.98)}
+.div{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:.72rem}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border)}
+.smsg{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--gold);text-align:center;min-height:16px;animation:blink .9s ease-in-out infinite}
+@keyframes blink{50%{opacity:.4}}
+.pid{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--dim);text-align:center;padding:7px;background:#06080f;border-radius:5px;border:1px solid var(--border);cursor:pointer;transition:border-color .2s}
+.pid:hover{border-color:var(--gold);color:var(--gold2)}
+#game{position:fixed;inset:0;z-index:5;display:grid;grid-template-rows:44px auto 1fr 34px 1fr auto 44px;gap:0;padding:5px}
+#game.hidden{display:none}
+.pi{display:flex;align-items:center;gap:9px;padding:3px 12px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:2px solid var(--border);background:var(--panel);flex-shrink:0}
+.pname{font-family:'Noto Serif KR',serif;font-size:.78rem;color:var(--gold);font-weight:700}
+.hprow{display:flex;align-items:center;gap:5px}
+.hpbar{width:100px;height:6px;background:#1a0a0a;border-radius:3px;overflow:hidden;border:1px solid #3a0000}
+.hpfill{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,#c0392b,#e74c3c,#ff6b6b)}
+.hptxt{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text)}
+.morbs{display:flex;gap:3px;margin-left:auto}
+.orb{width:12px;height:12px;border-radius:50%;border:1px solid #2a4080;transition:all .3s}
+.orb.on{background:radial-gradient(circle at 35% 35%,#7ad4ff,#1a7aff);box-shadow:0 0 5px #1a7aff88}
+.orb.off{background:#0a1030}
+.bf{display:flex;align-items:center;justify-content:center;gap:5px;padding:3px 12px;position:relative;min-height:100px}
+.bf.en{border-bottom:1px solid var(--border)}
+.bf.pl{border-top:1px solid var(--border)}
+.fl{position:absolute;right:12px;font-size:.6rem;color:var(--dim);opacity:.5}
+.cl{display:flex;align-items:center;padding:4px 16px;background:rgba(11,16,28,.92);border-top:1px solid var(--border);border-bottom:1px solid var(--border);gap:10px;z-index:3}
+.ti{font-family:'Noto Serif KR',serif;font-size:.72rem;color:var(--dim);font-weight:600;min-width:110px}
+.ti.on{color:var(--gold2);animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+.bet{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:.72rem;padding:6px 16px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);color:#7aff7a;border:1px solid #2a6a2a;border-radius:5px;cursor:pointer;transition:all .2s}
+.bet:hover{background:linear-gradient(135deg,#2a5a2a,#3a8a3a);box-shadow:0 0 15px #00ff0033}
+.bet:disabled{opacity:.3;cursor:not-allowed}
+.glog{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--dim);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.glog span{color:var(--gold)}
+.ha{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:4px 12px 2px;min-height:130px;overflow-x:auto;flex-wrap:nowrap}
+.ha.eh{align-items:flex-start;padding:2px 12px 4px}
+.ha::-webkit-scrollbar{height:2px}
+.ha::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.di{display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--dim);flex-shrink:0;padding:3px}
+.di .de{font-size:1.2rem}
+.card{width:78px;border-radius:9px;border:1.5px solid transparent;background:var(--panel);cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s;position:relative;flex-shrink:0}
+.card.play{border-color:var(--gold);box-shadow:0 0 9px #c9a22744}
+.card.sel{border-color:#fff;box-shadow:0 0 16px #ffffff66;transform:translateY(-11px) scale(1.05)}
+.card.atk{border-color:#ff4444;box-shadow:0 0 9px #ff444444;animation:atkP .6s ease-in-out infinite}
+@keyframes atkP{50%{box-shadow:0 0 20px #ff444488}}
+.card.ca{border-color:#4af;box-shadow:0 0 9px #4af4}
+.card:hover:not(.bk){transform:translateY(-7px) scale(1.03)}
+.ci{border-radius:8px;overflow:hidden;position:relative}
+.cc{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7ad4ff,#1a7aff);border:1px solid #4af;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;color:#fff;z-index:2}
+.ca2{height:50px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;position:relative;overflow:hidden}
+.cab{position:absolute;inset:0;opacity:.28}
+.cb{padding:3px 5px 5px;background:rgba(0,0,0,.65)}
+.cn{font-family:'Noto Serif KR',serif;font-size:.44rem;font-weight:700;color:var(--gold2);text-align:center;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct{font-size:.36rem;color:var(--dim);text-align:center;margin-bottom:2px;letter-spacing:.04em}
+.cd{font-size:.38rem;color:var(--text);text-align:center;line-height:1.3;min-height:20px;font-style:italic;word-break:keep-all}
+.cs{display:flex;justify-content:space-between;align-items:center;margin-top:3px;padding-top:3px;border-top:1px solid #ffffff11}
+.sa{background:linear-gradient(135deg,#7a1a00,#c0392b);color:#ffcccc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700}
+.sh{background:linear-gradient(135deg,#003a00,#27ae60);color:#ccffcc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700}
+.gem{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.kwb{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.kw{font-size:.33rem;padding:1px 3px;border-radius:2px;color:#fff;font-weight:700}
+.kw-taunt{background:#7a1a00}.kw-charge{background:#004080}.kw-divine{background:#5a4a00}.kw-lifesteal{background:#4a004a}.kw-poison{background:#004a00}.kw-rush{background:#1a3a5a}.kw-reborn{background:#3a003a}
+.card.bk .ci{background:linear-gradient(135deg,#0d1a2e,#1a0d2e);height:105px;display:flex;align-items:center;justify-content:center}
+.bkp{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:repeating-linear-gradient(45deg,transparent,transparent 7px,rgba(100,80,30,.1) 7px,rgba(100,80,30,.1) 14px),linear-gradient(135deg,#0d1a2e,#1a0d2e);border-radius:7px}
+.el-fire .cab{background:radial-gradient(circle,#ff4e1a44,#8b000044)}.el-fire .ci{border-top:2px solid var(--fire)}
+.el-water .cab{background:radial-gradient(circle,#1ab8ff33,#00407733)}.el-water .ci{border-top:2px solid var(--water)}
+.el-earth .cab{background:radial-gradient(circle,#7ab83a33,#2d4a0033)}.el-earth .ci{border-top:2px solid var(--earth)}
+.el-wind .cab{background:radial-gradient(circle,#a0e8e033,#204a4433)}.el-wind .ci{border-top:2px solid var(--wind)}
+.el-shadow .cab{background:radial-gradient(circle,#9b4dff33,#1a004433)}.el-shadow .ci{border-top:2px solid var(--shadow)}
+.el-light .cab{background:radial-gradient(circle,#ffe06633,#6a500033)}.el-light .ci{border-top:2px solid var(--light)}
+.el-thunder .cab{background:radial-gradient(circle,#f0e04033,#4a3a0033)}.el-thunder .ci{border-top:2px solid var(--thunder)}
+.el-ice .cab{background:radial-gradient(circle,#80dfff33,#00304433)}.el-ice .ci{border-top:2px solid var(--ice)}
+.el-nature .cab{background:radial-gradient(circle,#50c06033,#0a3a1033)}.el-nature .ci{border-top:2px solid var(--nature)}
+.rarity-common .gem{background:var(--c1)}.rarity-rare .gem{background:var(--c2);box-shadow:0 0 3px var(--c2)}.rarity-epic .gem{background:var(--c3);box-shadow:0 0 4px var(--c3)}.rarity-legendary .gem{background:var(--c4);box-shadow:0 0 6px var(--c4);animation:gg 2s ease-in-out infinite}
+@keyframes gg{50%{box-shadow:0 0 12px var(--c4)}}
+.rarity-legendary.card{animation:lg 3s ease-in-out infinite}
+@keyframes lg{0%,100%{box-shadow:0 0 6px #ffaa0022}50%{box-shadow:0 0 18px #ffaa0044}}
+@keyframes ce{0%{transform:scale(.6) translateY(18px);opacity:0}60%{transform:scale(1.07) translateY(-3px);opacity:1}100%{transform:scale(1) translateY(0)}}
+@keyframes aa{0%{transform:translateX(0) scale(1)}30%{transform:translateX(25px) scale(1.1)}60%{transform:translateX(-3px) scale(.97)}100%{transform:translateX(0) scale(1)}}
+@keyframes df{0%{filter:brightness(1)}30%{filter:brightness(3) saturate(0)}100%{filter:brightness(1)}}
+@keyframes ds{0%{transform:scale(1) rotate(0);opacity:1}100%{transform:scale(0) rotate(-90deg);opacity:0}}
+@keyframes fb{0%,100%{box-shadow:0 0 7px var(--fire)}50%{box-shadow:0 0 36px var(--fire),0 0 70px var(--fire)44}}
+@keyframes ia{0%,100%{box-shadow:0 0 7px var(--ice)}50%{box-shadow:0 0 36px var(--ice),0 0 70px var(--ice)44}}
+@keyframes sa2{0%,100%{box-shadow:0 0 7px var(--shadow)}50%{box-shadow:0 0 44px var(--shadow),0 0 88px var(--shadow)44}}
+@keyframes ha2{0%,100%{box-shadow:0 0 7px var(--light)}50%{box-shadow:0 0 44px var(--light),0 0 88px var(--light)66;filter:brightness(1.35)}}
+@keyframes la{0%,100%{filter:brightness(1)}20%{filter:brightness(4) saturate(.5) hue-rotate(200deg)}60%{filter:brightness(1)}80%{filter:brightness(3) saturate(.5) hue-rotate(200deg)}}
+@keyframes ea{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px) translateY(2px)}40%{transform:translateX(4px) translateY(-2px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes na{0%,100%{box-shadow:0 0 7px var(--nature)}50%{box-shadow:0 0 36px var(--nature),0 0 70px var(--nature)44}}
+@keyframes ta{0%,100%{box-shadow:0 0 7px var(--thunder)}50%{box-shadow:0 0 36px var(--thunder),0 0 70px var(--thunder)66}}
+.af{animation:fb .8s ease}.ai{animation:ia .8s ease}.as{animation:sa2 .8s ease}.ah{animation:ha2 .8s ease}.al{animation:la .5s ease}.ae{animation:ea .5s ease}.an{animation:na .8s ease}.at{animation:ta .5s ease}.aat{animation:aa .4s ease forwards}.ade{animation:ds .5s ease forwards}
+#pl{position:fixed;inset:0;pointer-events:none;z-index:100}
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:pf .8s ease-out forwards}
+@keyframes pf{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.notif{position:fixed;top:65px;left:50%;transform:translateX(-50%);background:rgba(11,16,28,.97);border:1px solid var(--gold);border-radius:7px;padding:8px 20px;font-family:'Noto Sans KR',sans-serif;font-size:.82rem;font-weight:500;color:var(--gold2);z-index:200;animation:na2 2.5s ease forwards;box-shadow:0 0 24px #c9a22733;pointer-events:none;white-space:nowrap}
+@keyframes na2{0%{opacity:0;transform:translateX(-50%) translateY(-7px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-7px)}}
+.tt{position:fixed;z-index:500;background:rgba(11,16,28,.98);border:1px solid var(--gold);border-radius:9px;padding:9px 12px;width:180px;pointer-events:none;display:none;box-shadow:0 0 24px #00000088}
+.tt.vis{display:block}
+.ttn{font-family:'Noto Serif KR',serif;font-size:.72rem;font-weight:700;color:var(--gold2);margin-bottom:3px}
+.ttd{font-size:.75rem;color:var(--text);line-height:1.4;margin-bottom:5px;word-break:keep-all}
+.tts{font-family:'JetBrains Mono',monospace;font-size:.68rem;display:flex;gap:7px;flex-wrap:wrap;margin-bottom:3px}
+.tte{display:flex;gap:2px;flex-wrap:wrap}
+.ttb{font-size:.56rem;padding:2px 5px;border-radius:3px;background:#1a2a3a;color:var(--dim)}
+#wo{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px}
+#wo.hidden{display:none}
+.wt{font-family:'Noto Serif KR',serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;animation:glow 1.5s ease-in-out infinite}
+.wt.win{background:linear-gradient(135deg,#c9a227,#fff8dc,#c9a227);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.wt.lose{color:#ff4444;-webkit-text-fill-color:#ff4444}
+.ws{font-size:.95rem;color:var(--dim)}
+
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div id="pl"></div>
+<div class="tt" id="tt"></div>
+
+<div id="lobby" class="screen">
+  <div class="logo">⚔ 비술의 격전</div>
+  <div class="sub">— 온라인 카드 배틀 —</div>
+  <div class="panel">
+    <div class="ig"><label>마법사 이름</label><input type="text" id="mn" placeholder="이름 입력" value="마법사"></div>
+    <div class="pid" id="pidb">접속 중<span id="pid"> ...</span></div>
+    <button class="btn bp" onclick="copyId()">📋 내 ID 복사</button>
+    <div class="div">또는 상대에게 접속</div>
+    <div class="ig"><label>상대방 Peer ID</label><input type="text" id="oid" placeholder="상대 ID 붙여넣기"></div>
+    <button class="btn bp" onclick="connect()">⚔ 대결 신청!</button>
+    <div class="div">또는</div>
+    <button class="btn bs" onclick="playSolo()">🤖 AI와 대결 (솔로)</button>
+    <div class="smsg" id="lstat"></div>
+  </div>
+</div>
+
+<div id="game" class="hidden">
+  <div class="pi">
+    <div class="av">🧙</div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div class="pname" id="en">상대 마법사</div>
+      <div class="hprow"><div class="hpbar"><div class="hpfill" id="ehb" style="width:100%"></div></div><span class="hptxt" id="eht">30 HP</span></div>
+    </div>
+    <div class="morbs" id="em"></div>
+  </div>
+  <div class="ha eh" id="eh"><div class="di"><span class="de">🃏</span><span id="edc">20</span></div></div>
+  <div class="bf en" id="ef"><span class="fl">⚔ 상대 전장</span></div>
+  <div class="cl">
+    <div class="ti" id="ti">대기 중...</div>
+    <div class="glog" id="gl">게임 시작!</div>
+    <button class="bet" id="bet" onclick="endTurn()" disabled>턴 종료 ↵</button>
+  </div>
+  <div class="bf pl" id="pf"><span class="fl">🛡 내 전장</span></div>
+  <div class="ha" id="ph"><div class="di"><span class="de">🃏</span><span id="pdc">20</span></div></div>
+  <div class="pi" style="flex-direction:row-reverse">
+    <div class="av">🧙</div>
+    <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-end">
+      <div class="pname" id="pnd">나</div>
+      <div class="hprow"><span class="hptxt" id="pht">30 HP</span><div class="hpbar"><div class="hpfill" id="phb" style="width:100%"></div></div></div>
+    </div>
+    <div class="morbs" id="pm" style="margin-left:0;margin-right:auto"></div>
+  </div>
+</div>
+
+<div id="wo" class="hidden">
+  <div class="wt" id="wt">승리!</div>
+  <div class="ws" id="ws"></div>
+  <button class="btn bp" onclick="location.reload()">다시 플레이</button>
+</div>
+
+<script>
+const DB=[
+/* 화염 크리처 */
+{id:"fs",n:"불꽃정령",t:"c",e:"fire",r:"common",c:1,a:2,h:1,m:"🔥",d:"돌격. 빠른 불꽃 정령.",ef:["charge"],an:"fire"},
+{id:"ed",n:"잿빛드레이크",t:"c",e:"fire",r:"common",c:2,a:3,h:2,m:"🐉",d:"돌격. 화염을 내뿜는다.",ef:["charge"],an:"fire"},
+{id:"fi",n:"화염악마",t:"c",e:"fire",r:"common",c:2,a:2,h:3,m:"😈",d:"공격시 1피해 추가.",ef:["burn1"],an:"fire"},
+{id:"lg",n:"용암골렘",t:"c",e:"fire",r:"rare",c:4,a:4,h:7,m:"🌋",d:"도발. 화산에서 태어남.",ef:["taunt"],an:"fire"},
+{id:"mg",n:"마그마거인",t:"c",e:"fire",r:"rare",c:5,a:5,h:6,m:"👹",d:"도발. 돌격.",ef:["taunt","charge"],an:"fire"},
+{id:"px",n:"불사조",t:"c",e:"fire",r:"epic",c:5,a:4,h:4,m:"🦅",d:"생명흡수. 죽으면 패로 귀환(1회).",ef:["lifesteal","reborn"],an:"holy"},
+{id:"fd",n:"화염룡",t:"c",e:"fire",r:"epic",c:6,a:6,h:5,m:"🐲",d:"돌격. 공격시 인접 적 2피해.",ef:["charge","cleave2"],an:"fire"},
+{id:"il",n:"지옥불군주",t:"c",e:"fire",r:"legendary",c:8,a:7,h:8,m:"☄️",d:"전함: 적 전체 3피해.",ef:["bc-aoe3"],an:"fire"},
+/* 물/얼음 크리처 */
+{id:"ws",n:"물의정령",t:"c",e:"water",r:"common",c:1,a:1,h:3,m:"💧",d:"도발.",ef:["taunt"],an:"ice"},
+{id:"fa",n:"서리궁수",t:"c",e:"water",r:"common",c:2,a:3,h:2,m:"🏹",d:"급습.",ef:["rush"],an:"ice"},
+{id:"ss",n:"바다뱀",t:"c",e:"water",r:"rare",c:4,a:3,h:7,m:"🐍",d:"도발. 심해수호자.",ef:["taunt"],an:"ice"},
+{id:"fm",n:"서리마법사",t:"c",e:"water",r:"rare",c:3,a:2,h:5,m:"🧊",d:"전함: 적 미니언 빙결.",ef:["bc-freeze1"],an:"ice"},
+{id:"ig",n:"얼음골렘",t:"c",e:"ice",r:"rare",c:4,a:2,h:9,m:"🗿",d:"도발. 죽으면 적 빙결.",ef:["taunt","dr-freeze"],an:"ice"},
+{id:"bw",n:"눈보라와이번",t:"c",e:"ice",r:"epic",c:5,a:5,h:5,m:"🌬️",d:"돌격. 공격시 빙결.",ef:["charge","foa"],an:"ice"},
+{id:"lv",n:"레비아탄",t:"c",e:"water",r:"legendary",c:7,a:7,h:7,m:"🌊",d:"돌격. 전함: 적 전장 전멸.",ef:["charge","bc-clear"],an:"ice"},
+{id:"ak",n:"고대크라켄",t:"c",e:"water",r:"legendary",c:9,a:8,h:8,m:"🦑",d:"전함: 전체 빙결+2피해.",ef:["bc-freeze-all","bc-aoe2"],an:"ice"},
+/* 대지/자연 크리처 */
+{id:"sg",n:"석조수호자",t:"c",e:"earth",r:"common",c:3,a:2,h:6,m:"🗿",d:"도발.",ef:["taunt"],an:"earth"},
+{id:"re",n:"바위정령",t:"c",e:"earth",r:"common",c:2,a:3,h:3,m:"🪨",d:"급습.",ef:["rush"],an:"earth"},
+{id:"tr",n:"트리안트",t:"c",e:"earth",r:"rare",c:4,a:2,h:8,m:"🌲",d:"도발. 생명흡수.",ef:["taunt","lifesteal"],an:"nature"},
+{id:"mj",n:"진흙거인",t:"c",e:"earth",r:"rare",c:5,a:6,h:6,m:"🧌",d:"도발. 돌격.",ef:["taunt","charge"],an:"earth"},
+{id:"at2",n:"고대나무정령",t:"c",e:"earth",r:"epic",c:6,a:5,h:9,m:"🌳",d:"도발. 생명흡수.",ef:["taunt","lifesteal"],an:"nature"},
+{id:"gt",n:"대지신가이아",t:"c",e:"earth",r:"legendary",c:9,a:8,h:10,m:"🏔️",d:"도발. 신성. 영속: 아군 +1체력.",ef:["taunt","divine","aura-hp"],an:"earth"},
+{id:"vsb",n:"숲의정령",t:"c",e:"nature",r:"common",c:2,a:2,h:3,m:"🌿",d:"급습.",ef:["rush"],an:"nature"},
+{id:"vb",n:"덩굴야수",t:"c",e:"nature",r:"common",c:3,a:4,h:4,m:"🌱",d:"급습.",ef:["rush"],an:"nature"},
+{id:"db",n:"드루이드곰",t:"c",e:"nature",r:"rare",c:4,a:5,h:5,m:"🐻",d:"도발. 급습.",ef:["taunt","rush"],an:"nature"},
+{id:"et",n:"장로나무",t:"c",e:"nature",r:"rare",c:5,a:3,h:10,m:"🌴",d:"도발. 매턴 아군 1회복.",ef:["taunt","regen"],an:"nature"},
+{id:"wt2",n:"세계수",t:"c",e:"nature",r:"legendary",c:9,a:5,h:12,m:"🌳",d:"도발. 영속: 아군 최대체력 +2.",ef:["taunt","aura-maxhp"],an:"nature"},
+/* 바람 크리처 */
+{id:"wi",n:"바람정령",t:"c",e:"wind",r:"common",c:1,a:2,h:1,m:"🌀",d:"돌격.",ef:["charge"],an:"lightning"},
+{id:"sh",n:"폭풍매",t:"c",e:"wind",r:"common",c:2,a:3,h:2,m:"🦅",d:"돌격.",ef:["charge"],an:"lightning"},
+{id:"wd",n:"바람무희",t:"c",e:"wind",r:"rare",c:3,a:4,h:3,m:"💃",d:"돌격. 신성.",ef:["charge","divine"],an:"lightning"},
+{id:"gr",n:"폭풍기사",t:"c",e:"wind",r:"rare",c:4,a:5,h:4,m:"🌪️",d:"돌격. 공격시 인접 2피해.",ef:["charge","cleave2"],an:"lightning"},
+{id:"st",n:"폭풍거인",t:"c",e:"wind",r:"legendary",c:7,a:6,h:7,m:"⛈️",d:"돌격. 신성. 공격시 번개 2피해.",ef:["charge","divine","burn2"],an:"thunder"},
+/* 어둠 크리처 */
+{id:"si",n:"그림자악마",t:"c",e:"shadow",r:"common",c:1,a:2,h:2,m:"👺",d:"죽으면 무작위 적 1피해.",ef:["dr-dmg1"],an:"shadow"},
+{id:"sa3",n:"그림자암살자",t:"c",e:"shadow",r:"rare",c:3,a:5,h:2,m:"🗡️",d:"돌격. 독.",ef:["charge","poison"],an:"shadow"},
+{id:"vw",n:"공허유령",t:"c",e:"shadow",r:"rare",c:4,a:3,h:5,m:"👻",d:"도발. 생명흡수.",ef:["taunt","lifesteal"],an:"shadow"},
+{id:"nc",n:"사령술사",t:"c",e:"shadow",r:"epic",c:5,a:3,h:6,m:"💀",d:"전함: 죽은 아군 소환.",ef:["bc-resurrect"],an:"shadow"},
+{id:"sd",n:"그림자용",t:"c",e:"shadow",r:"epic",c:6,a:5,h:6,m:"🐉",d:"독. 도발.",ef:["poison","taunt"],an:"shadow"},
+{id:"dl",n:"암흑군주",t:"c",e:"shadow",r:"legendary",c:8,a:8,h:8,m:"🌑",d:"영속: 아군 +2/+2.",ef:["aura-buff2"],an:"shadow"},
+{id:"vg",n:"공허신",t:"c",e:"shadow",r:"legendary",c:10,a:10,h:10,m:"🕳️",d:"돌격. 독. 신성.",ef:["charge","poison","divine"],an:"shadow"},
+/* 빛 크리처 */
+{id:"ls",n:"빛의정령",t:"c",e:"light",r:"common",c:1,a:1,h:2,m:"⭐",d:"전함: 영웅 1회복.",ef:["bc-heal1"],an:"holy"},
+{id:"hp",n:"성스러운기사",t:"c",e:"light",r:"rare",c:3,a:2,h:5,m:"⚔️",d:"생명흡수. 신성.",ef:["lifesteal","divine"],an:"holy"},
+{id:"hm",n:"치유수도사",t:"c",e:"light",r:"rare",c:3,a:1,h:6,m:"🏥",d:"도발. 매턴 영웅 2회복.",ef:["taunt","regen2"],an:"holy"},
+{id:"aa2",n:"대천사",t:"c",e:"light",r:"epic",c:6,a:5,h:6,m:"😇",d:"전함: 영웅 6회복+전체신성.",ef:["bc-heal6","bc-divine-all"],an:"holy"},
+{id:"ld",n:"빛의용",t:"c",e:"light",r:"epic",c:7,a:6,h:7,m:"🐉",d:"생명흡수. 신성. 돌격.",ef:["lifesteal","divine","charge"],an:"holy"},
+{id:"dg",n:"신성수호자",t:"c",e:"light",r:"legendary",c:8,a:6,h:8,m:"🛡️",d:"도발. 신성. 죽으면 영웅 신성.",ef:["taunt","divine","dr-hero-divine"],an:"holy"},
+/* 번개 크리처 */
+{id:"spk",n:"번갯불요정",t:"c",e:"thunder",r:"common",c:1,a:2,h:1,m:"⚡",d:"돌격.",ef:["charge"],an:"thunder"},
+{id:"tg",n:"번개골렘",t:"c",e:"thunder",r:"rare",c:4,a:4,h:5,m:"🤖",d:"공격시 적 전체 1피해.",ef:["chain1"],an:"thunder"},
+{id:"lw",n:"번개마녀",t:"c",e:"thunder",r:"rare",c:3,a:3,h:4,m:"🧙‍♀️",d:"전함: 주문비용 1감소.",ef:["bc-cost"],an:"thunder"},
+{id:"sc",n:"폭풍호출사",t:"c",e:"thunder",r:"epic",c:5,a:4,h:5,m:"🌩️",d:"전함: 무작위 2명 3피해.",ef:["bc-rand3-2"],an:"thunder"},
+{id:"td",n:"천둥용",t:"c",e:"thunder",r:"legendary",c:8,a:8,h:8,m:"🐲",d:"돌격. 공격시 전체 2피해.",ef:["charge","chain2"],an:"thunder"},
+/* 화염 주문 */
+{id:"fb2",n:"파이어볼",t:"s",e:"fire",r:"common",c:3,a:0,h:0,m:"🔥",d:"모든 대상 5피해.",ef:["dmg5"],an:"fire"},
+{id:"fs2",n:"화염강타",t:"s",e:"fire",r:"common",c:2,a:0,h:0,m:"🌡️",d:"적 미니언 4피해.",ef:["dmg4"],an:"fire"},
+{id:"inf",n:"인페르노",t:"s",e:"fire",r:"rare",c:5,a:0,h:0,m:"☄️",d:"적 미니언 전체 4피해.",ef:["aoe-enemy4"],an:"fire"},
+{id:"ve",n:"화산폭발",t:"s",e:"fire",r:"epic",c:7,a:0,h:0,m:"🌋",d:"전체 6피해.",ef:["aoe-all6"],an:"fire"},
+{id:"mt",n:"운석",t:"s",e:"fire",r:"legendary",c:6,a:0,h:0,m:"☄️",d:"미니언 하나 15피해, 주변 3피해.",ef:["dmg15"],an:"fire"},
+/* 물/얼음 주문 */
+{id:"fbo",n:"서리화살",t:"s",e:"ice",r:"common",c:2,a:0,h:0,m:"❄️",d:"3피해+빙결.",ef:["dmg3","freeze1"],an:"ice"},
+{id:"blz",n:"눈보라",t:"s",e:"water",r:"rare",c:5,a:0,h:0,m:"🌨️",d:"적 전체 3피해+빙결.",ef:["aoe3","freeze-all"],an:"ice"},
+{id:"il2",n:"얼음창",t:"s",e:"ice",r:"common",c:1,a:0,h:0,m:"🏔️",d:"빙결 대상 6피해, 아니면 빙결.",ef:["dmg6-frozen"],an:"ice"},
+{id:"ftmb",n:"냉동무덤",t:"s",e:"ice",r:"epic",c:6,a:0,h:0,m:"🧊",d:"적 미니언 5턴 빙결.",ef:["freeze5"],an:"ice"},
+/* 번개 주문 */
+{id:"lb",n:"번개화살",t:"s",e:"thunder",r:"common",c:2,a:0,h:0,m:"⚡",d:"4피해. 다음 주문 비용1감소.",ef:["dmg4","cost-red"],an:"thunder"},
+{id:"cl",n:"연쇄번개",t:"s",e:"thunder",r:"rare",c:4,a:0,h:0,m:"⚡",d:"무작위 4피해 3회.",ef:["chain4-3"],an:"thunder"},
+{id:"ov",n:"오버로드",t:"s",e:"thunder",r:"epic",c:3,a:0,h:0,m:"💥",d:"영웅 8피해. 다음턴 마나-2.",ef:["hero-dmg8","overload2"],an:"thunder"},
+{id:"cos",n:"폭풍소환",t:"s",e:"thunder",r:"legendary",c:8,a:0,h:0,m:"🌩️",d:"모든 적 5피해+빙결.",ef:["aoe5","freeze-all"],an:"thunder"},
+/* 어둠 주문 */
+{id:"sbo",n:"암흑화살",t:"s",e:"shadow",r:"common",c:2,a:0,h:0,m:"🌑",d:"3피해. 체력3이하 즉사.",ef:["dmg3","exec3"],an:"shadow"},
+{id:"dr",n:"어둠의식",t:"s",e:"shadow",r:"rare",c:3,a:0,h:0,m:"🕯️",d:"아군 희생→5피해.",ef:["sac-dmg5"],an:"shadow"},
+{id:"sd2",n:"영혼흡수",t:"s",e:"shadow",r:"rare",c:4,a:0,h:0,m:"💜",d:"5피해+회복.",ef:["drain5"],an:"shadow"},
+{id:"vc",n:"공허붕괴",t:"s",e:"shadow",r:"epic",c:6,a:0,h:0,m:"🕳️",d:"미니언 즉시파괴.",ef:["destroy1"],an:"shadow"},
+{id:"apc",n:"아포칼립스",t:"s",e:"shadow",r:"legendary",c:10,a:0,h:0,m:"💀",d:"전장 전체 파괴. 영웅 5피해.",ef:["destroy-all","hero-aoe5"],an:"shadow"},
+/* 빛 주문 */
+{id:"hl",n:"치유",t:"s",e:"light",r:"common",c:1,a:0,h:0,m:"💚",d:"영웅/미니언 5회복.",ef:["heal5"],an:"holy"},
+{id:"hn",n:"신성노바",t:"s",e:"light",r:"rare",c:5,a:0,h:0,m:"✨",d:"적 2피해. 아군 2회복.",ef:["aoe-dmg2","aoe-heal2"],an:"holy"},
+{id:"gh",n:"강화치유",t:"s",e:"light",r:"rare",c:4,a:0,h:0,m:"💎",d:"영웅 10회복+아군 2회복.",ef:["heal10","aoe-heal2"],an:"holy"},
+{id:"dj",n:"신성심판",t:"s",e:"light",r:"epic",c:6,a:0,h:0,m:"⚖️",d:"적 미니언 전체 파괴.",ef:["destroy-all-enemy"],an:"holy"},
+{id:"rs",n:"부활",t:"s",e:"light",r:"legendary",c:7,a:0,h:0,m:"🌟",d:"죽은 아군 3마리 부활.",ef:["resurrect3"],an:"holy"},
+/* 자연 주문 */
+{id:"eq",n:"지진",t:"s",e:"earth",r:"rare",c:4,a:0,h:0,m:"🌍",d:"전체 미니언 4피해.",ef:["aoe-minions4"],an:"earth"},
+{id:"en2",n:"덩굴속박",t:"s",e:"nature",r:"rare",c:3,a:0,h:0,m:"🌿",d:"적 전체 빙결.",ef:["freeze-all-enemy"],an:"nature"},
+{id:"nw",n:"자연의분노",t:"s",e:"nature",r:"epic",c:5,a:0,h:0,m:"🌱",d:"아군 전체 +3/+3.",ef:["buff-all3"],an:"nature"},
+/* 유물 */
+{id:"sof",n:"화염검",t:"a",e:"fire",r:"epic",c:3,a:0,h:0,m:"🗡️",d:"영웅 +3공격력(2턴).",ef:["hero-atk3"],an:"fire"},
+{id:"ic2",n:"얼음왕관",t:"a",e:"ice",r:"rare",c:2,a:0,h:0,m:"👑",d:"피격시 공격자 빙결.",ef:["hero-freeze-hit"],an:"ice"},
+{id:"ms",n:"반사방패",t:"a",e:"light",r:"rare",c:2,a:0,h:0,m:"🛡️",d:"영웅 신성보호막.",ef:["hero-divine"],an:"holy"},
+{id:"ts",n:"번개지팡이",t:"a",e:"thunder",r:"epic",c:4,a:0,h:0,m:"🪄",d:"주문 사용시 1피해 추가.",ef:["spell-bonus1"],an:"thunder"},
+{id:"top",n:"마력의서",t:"a",e:"light",r:"legendary",c:5,a:0,h:0,m:"📖",d:"카드3장 드로우. 아군 +1/+1.",ef:["draw3","buff-all1"],an:"holy"}
+];
+
+const AMAP={fire:{c:"#ff4e1a",n:14},ice:{c:"#80dfff",n:14},shadow:{c:"#9b4dff",n:14},holy:{c:"#ffe066",n:18},lightning:{c:"#a0e8e0",n:12},earth:{c:"#7ab83a",n:10},nature:{c:"#50c060",n:12},thunder:{c:"#f0e040",n:12},default:{c:"#cccccc",n:6}};
+const KW={taunt:"도발",charge:"돌격",divine:"신성",lifesteal:"생명흡수",poison:"독",rush:"급습",reborn:"재탄생"};
+const EL={fire:"화염",water:"물",earth:"대지",wind:"바람",shadow:"어둠",light:"빛",thunder:"번개",ice:"얼음",nature:"자연"};
+const TP={c:"크리처",s:"주문",a:"유물"};
+const RL={common:"일반",rare:"레어",epic:"에픽",legendary:"전설"};
+const RC={common:"#8fa0b0",rare:"#4da6ff",epic:"#cc44ff",legendary:"#ffaa00"};
+let peer,conn,myId,soloMode=false,myTurn=false,started=false,atkIdx=null;
+const MHP=30,MX=10,DSZ=25;
+let S={p:{hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:[],hand:[],field:[],name:"나"},e:{hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:[],hand:[],field:[],name:"상대"}};
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildDeck(){
+  const pool=[...DB];const dk=[];
+  ['legendary','epic','rare','common'].forEach(r=>{
+    const cs=pool.filter(c=>c.r===r);
+    const need={legendary:1,epic:2,rare:4,common:6}[r];
+    while(dk.filter(c=>c.r===r).length<need&&cs.length){dk.push(JSON.parse(JSON.stringify(cs[Math.floor(Math.random()*cs.length)])));}
+  });
+  while(dk.length<DSZ){dk.push(JSON.parse(JSON.stringify(pool[Math.floor(Math.random()*pool.length)])));}
+  return shuffle(dk.slice(0,DSZ));
+}
+function initGame(){
+  const name=document.getElementById('mn').value||'마법사';
+  S.p={hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:buildDeck(),hand:[],field:[],name};
+  S.e={hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:buildDeck(),hand:[],field:[],name:S.e.name||'상대방'};
+  document.getElementById('pnd').textContent=name;
+  document.getElementById('en').textContent=S.e.name;
+  for(let i=0;i<4;i++)drawCard('p');
+  for(let i=0;i<3;i++){if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));}
+  document.getElementById('lobby').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  started=true;atkIdx=null;
+}
+function prep(c){c=JSON.parse(JSON.stringify(c));c.chp=c.h;c.catk=c.a;c.canAtk=false;c.frozen=false;c.ds=false;return c;}
+function drawCard(who,n=1){
+  for(let i=0;i<n;i++){
+    const p=S[who];
+    if(!p.deck.length){notify(who==='p'?'덱이 비었습니다!':'상대 덱 비었음');return;}
+    if(p.hand.length>=10){notify(who==='p'?'패가 꽉 찼습니다!':'상대 패 꽉 참');return;}
+    p.hand.push(prep(p.deck.pop()));
+  }
+}
+function beginMyTurn(){
+  myTurn=true;
+  S.p.mmn=Math.min(MX,S.p.mmn+1);S.p.mn=S.p.mmn;
+  drawCard('p');
+  S.p.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
+  // regen
+  S.p.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>{S.p.hp=Math.min(S.p.maxHp,S.p.hp+2);});
+  S.p.field.filter(c=>c&&c.ef.includes('regen')).forEach(()=>{S.p.field.forEach(c2=>{if(c2)c2.chp=Math.min(c2.h,c2.chp+1);});});
+  document.getElementById('bet').disabled=false;
+  document.getElementById('ti').textContent='⚔ 내 턴';
+  document.getElementById('ti').classList.add('on');
+  notify('내 턴!');log('내 턴 시작.');updateUI();
+}
+function endTurn(){
+  if(!myTurn)return;
+  myTurn=false;atkIdx=null;
+  document.getElementById('bet').disabled=true;
+  document.getElementById('ti').textContent='상대방 턴...';
+  document.getElementById('ti').classList.remove('on');
+  if(soloMode){updateUI();setTimeout(aiTurn,700);}
+  else{send({type:'endTurn'});log('턴 종료.');}
+  updateUI();
+}
+function oppEndTurn(){
+  S.e.mmn=Math.min(MX,S.e.mmn+1);S.e.mn=S.e.mmn;
+  if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));
+  S.e.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
+  S.e.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>{S.e.hp=Math.min(S.e.maxHp,S.e.hp+2);});
+  log('상대방 턴 종료.');beginMyTurn();
+}
+function playCard(idx){
+  if(!myTurn)return;
+  const card=S.p.hand[idx];if(!card)return;
+  if(S.p.mn<card.c){notify('마나가 부족합니다! 💧');return;}
+  if(card.t==='c'&&S.p.field.length>=7){notify('전장이 가득 찼습니다!');return;}
+  S.p.mn-=card.c;S.p.hand.splice(idx,1);
+  if(card.t==='c'){
+    card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');
+    card.ds=card.ef.includes('divine');
+    applyBC(card,'p');applyAura(card,'p');
+    S.p.field.push(card);trigA(card.an);log(`<span>${card.n}</span> 소환!`);
+  }else if(card.t==='s'){applySpell(card,'p');trigA(card.an);log(`<span>${card.n}</span> 시전!`);}
+  else if(card.t==='a'){applyArtifact(card,'p');trigA(card.an);log(`<span>${card.n}</span> 장착!`);}
+  if(!soloMode)send({type:'action',action:'play',card,idx});
+  cleanDead('p');cleanDead('e');checkWin();updateUI();atkIdx=null;
+}
+function applyBC(card,who){
+  const en=who==='p'?'e':'p',ef=card.ef;
+  if(ef.includes('bc-heal1'))healH(who,1);
+  if(ef.includes('bc-heal6'))healH(who,6);
+  if(ef.includes('bc-freeze1')&&S[en].field.length>0){S[en].field[0].frozen=true;S[en].field[0].canAtk=false;notify('빙결!');}
+  if(ef.includes('bc-freeze-all')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
+  if(ef.includes('bc-clear')){S[en].field=[];notify('전장 클리어!');}
+  if(ef.includes('bc-resurrect')){notify('부활!');}
+  if(ef.includes('bc-aoe3')){aoe(en,3);notify('적 전체 3피해!');}
+  if(ef.includes('bc-aoe2')){aoe(en,2);}
+  if(ef.includes('bc-divine-all')){S[who].field.forEach(c=>{if(c)c.ds=true;});notify('전체 신성!');}
+  if(ef.includes('bc-rand3-2')){for(let i=0;i<2;i++){const t=randT(en);if(t)hit(t,3);}}
+  if(ef.includes('bc-cost')){notify('주문비용 1감소!');}
+}
+function applyAura(card,who){
+  if(card.ef.includes('aura-buff2')){S[who].field.forEach(c=>{if(c&&c!==card){c.catk+=2;c.chp+=2;}});notify(`${card.n}: 아군 +2/+2`);}
+  if(card.ef.includes('aura-hp')){S[who].field.forEach(c=>{if(c&&c!==card)c.chp+=1;});}
+}
+function applySpell(card,who){
+  const en=who==='p'?'e':'p',ef=card.ef;
+  if(ef.includes('dmg5')){if(S[en].field.length>0)hit(randT(en),5);else S[en].hp-=5;}
+  if(ef.includes('dmg4')){if(S[en].field.length>0)hit(randT(en),4);else S[en].hp-=4;}
+  if(ef.includes('dmg3')){if(S[en].field.length>0)hit(randT(en),3);else S[en].hp-=3;}
+  if(ef.includes('dmg15')){const t=randT(en);if(t)hit(t,15);}
+  if(ef.includes('aoe3')){aoe(en,3);S[en].hp-=3;}
+  if(ef.includes('aoe5')){aoe(en,5);S[en].hp-=5;}
+  if(ef.includes('aoe-enemy4')){aoe(en,4);}
+  if(ef.includes('aoe-all6')){aoe(who,6);aoe(en,6);S[who].hp-=6;S[en].hp-=6;}
+  if(ef.includes('aoe-dmg2')){aoe(en,2);S[en].hp-=2;}
+  if(ef.includes('aoe-heal2')){S[who].field.forEach(c=>{if(c)c.chp=Math.min(c.h,c.chp+2);});healH(who,2);}
+  if(ef.includes('heal5')){healH(who,5);notify('+5 회복!');}
+  if(ef.includes('heal10')){healH(who,10);notify('+10 회복!');}
+  if(ef.includes('freeze1')){const t=randT(en);if(t){t.frozen=true;t.canAtk=false;}notify('빙결!');}
+  if(ef.includes('freeze-all')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
+  if(ef.includes('freeze-all-enemy')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
+  if(ef.includes('exec3')){S[en].field.forEach(c=>{if(c&&c.chp<=3)c.chp=0;});}
+  if(ef.includes('destroy1')){if(S[en].field.length>0){const i=Math.floor(Math.random()*S[en].field.length);S[en].field[i].chp=0;}notify('파괴!');}
+  if(ef.includes('destroy-all')){S[who].field=[];S[en].field=[];notify('전체 파괴!');}
+  if(ef.includes('destroy-all-enemy')){S[en].field.forEach(c=>{if(c)c.chp=0;});notify('적 전체 파괴!');}
+  if(ef.includes('hero-aoe5')){S[who].hp-=5;S[en].hp-=5;}
+  if(ef.includes('hero-dmg8')){S[en].hp-=8;notify('영웅 8피해!');}
+  if(ef.includes('buff-all3')){S[who].field.forEach(c=>{if(c){c.catk+=3;c.chp+=3;}});notify('+3/+3!');}
+  if(ef.includes('buff-all1')){S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});}
+  if(ef.includes('chain4-3')){for(let i=0;i<3;i++){const t=randT(en);if(t)hit(t,4);else S[en].hp-=4;}}
+  if(ef.includes('drain5')){const t=randT(en);if(t){hit(t,5);healH(who,5);}else{S[en].hp-=5;healH(who,5);}}
+  if(ef.includes('draw3')){drawCard(who,3);}
+  if(ef.includes('resurrect3')){notify('3마리 부활!');}
+  if(ef.includes('aoe-minions4')){S[who].field.forEach(c=>{if(c)hit(c,4);});S[en].field.forEach(c=>{if(c)hit(c,4);});}
+  if(ef.includes('dmg6-frozen')){const t=randT(en);if(t){if(t.frozen)hit(t,6);else{t.frozen=true;t.canAtk=false;}};}
+  cleanDead(who);cleanDead(en);
+}
+function applyArtifact(card,who){
+  const ef=card.ef;
+  if(ef.includes('hero-atk3')){S[who].heroAtk=3;notify('영웅 +3공격!');}
+  if(ef.includes('hero-divine')){S[who].heroDivine=true;notify('영웅 신성!');}
+  if(ef.includes('draw3')){drawCard(who,3);}
+  if(ef.includes('buff-all1')){S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});}
+}
+function hit(card,dmg){if(!card)return;if(card.ds){card.ds=false;return;}card.chp-=dmg;}
+function aoe(who,dmg){S[who].field.forEach(c=>{if(c)hit(c,dmg);});}
+function healH(who,amt){S[who].hp=Math.min(S[who].maxHp,S[who].hp+amt);}
+function randT(who){const f=S[who].field.filter(c=>c);return f.length?f[Math.floor(Math.random()*f.length)]:null;}
+function cleanDead(who){
+  S[who].field.forEach(c=>{
+    if(c&&c.chp<=0){
+      if(c.ef.includes('dr-freeze')){const t=randT(who==='p'?'e':'p');if(t){t.frozen=true;t.canAtk=false;}}
+      if(c.ef.includes('dr-dmg1')){const en=who==='p'?'e':'p';const t=randT(en);if(t)hit(t,1);else S[en].hp-=1;}
+      if(c.ef.includes('dr-hero-divine')){S[who].heroDivine=true;notify('영웅 신성!');}
+      if(c.ef.includes('reborn')&&!c._rb){c.chp=1;c._rb=true;trigA(c.an);return;}
+      trigA(c.an);
+    }
+  });
+  S[who].field=S[who].field.filter(c=>c&&c.chp>0);
+}
+function attack(ai,tw,ti2){
+  if(!myTurn)return;
+  const atk=S.p.field[ai];if(!atk||!atk.canAtk){notify('공격 불가!');return;}
+  const dmg=atk.catk;
+  if(tw==='hero'){
+    const ht=S.e.field.some(c=>c&&c.ef.includes('taunt'));
+    if(ht){notify('도발 미니언이 막습니다!');return;}
+    if(S.e.heroDivine){S.e.heroDivine=false;notify('신성파괴!');}
+    else S.e.hp-=dmg;
+    if(atk.ef.includes('lifesteal'))healH('p',dmg);
+    parts(window.innerWidth/2,window.innerHeight*.2,'#ff4444',14);
+    log(`<span>${atk.n}</span>→적 영웅 ${dmg}피해`);
+  }else{
+    const tgt=S.e.field[ti2];if(!tgt)return;
+    const ht=S.e.field.some((c,i)=>c&&c.ef.includes('taunt')&&i!==ti2);
+    if(ht&&!tgt.ef.includes('taunt')){notify('도발 먼저!');return;}
+    if(atk.ef.includes('poison'))tgt.chp=0;else hit(tgt,dmg);
+    if(tgt.chp>0){if(atk.ds)atk.ds=false;else hit(atk,tgt.catk);}
+    if(atk.ef.includes('lifesteal'))healH('p',dmg);
+    if(atk.ef.includes('cleave2')){S.e.field.forEach((c,i)=>{if(c&&i!==ti2)hit(c,2);});}
+    trigA(atk.an);log(`<span>${atk.n}</span>→<span>${tgt.n}</span>`);
+  }
+  atk.canAtk=false;
+  if(!soloMode)send({type:'action',action:'attack',ai,tw,ti2,dmg});
+  cleanDead('p');cleanDead('e');atkIdx=null;checkWin();updateUI();
+}
+function handleRemote(msg){
+  const {action}=msg;
+  if(action==='play'){
+    const card=msg.card;
+    if(card.t==='c'){applyBC(card,'e');applyAura(card,'e');S.e.field.push(card);}
+    else if(card.t==='s')applySpell(card,'e');
+    else if(card.t==='a')applyArtifact(card,'e');
+    if(S.e.hand.length>0)S.e.hand.pop();
+    trigA(card.an);log(`상대: <span>${card.n}</span>`);
+  }else if(action==='attack'){
+    const {ai,tw,ti2,dmg}=msg,atk=S.e.field[ai];
+    if(!atk){updateUI();return;}
+    if(tw==='hero'){
+      if(S.p.heroDivine)S.p.heroDivine=false;else S.p.hp-=dmg;
+      if(atk.ef.includes('lifesteal'))healH('e',dmg);
+      parts(window.innerWidth/2,window.innerHeight*.75,'#ff4444',14);
+      log(`상대 <span>${atk.n}</span>→내 영웅 ${dmg}피해`);
+    }else{
+      const tgt=S.p.field[ti2];
+      if(tgt){
+        if(atk.ef.includes('poison'))tgt.chp=0;else hit(tgt,dmg);
+        if(tgt.chp>0)hit(atk,tgt.catk);
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
+        if(atk.ef.includes('cleave2')){S.p.field.forEach((c,i)=>{if(c&&i!==ti2)hit(c,2);});}
+      }
+      trigA(atk.an);
+    }
+    if(atk)atk.canAtk=false;
+  }
+  cleanDead('p');cleanDead('e');checkWin();updateUI();
+}
+function aiTurn(){
+  S.e.mmn=Math.min(MX,S.e.mmn+1);S.e.mn=S.e.mmn;
+  if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));
+  S.e.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
+  S.e.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>{S.e.hp=Math.min(S.e.maxHp,S.e.hp+2);});
+  // play cards
+  let ch=true;
+  while(ch){
+    ch=false;
+    const aff=S.e.hand.filter(c=>c&&c.c<=S.e.mn&&(c.t!=='c'||S.e.field.length<7)).sort((a,b)=>b.c-a.c);
+    if(!aff.length)break;
+    const card=aff[0];const idx=S.e.hand.indexOf(card);
+    S.e.mn-=card.c;S.e.hand.splice(idx,1);
+    if(card.t==='c'){card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');card.ds=card.ef.includes('divine');applyBC(card,'e');applyAura(card,'e');S.e.field.push(card);}
+    else if(card.t==='s')applySpell(card,'e');
+    else if(card.t==='a')applyArtifact(card,'e');
+    trigA(card.an);log(`AI: <span>${card.n}</span>`);
+    cleanDead('p');cleanDead('e');ch=true;
+  }
+  setTimeout(()=>{
+    S.e.field.forEach((atk,i)=>{
+      if(!atk||!atk.canAtk)return;
+      const dmg=atk.catk;
+      const ts=S.p.field.filter(c=>c&&c.ef.includes('taunt'));
+      let tgt=null,ti=-1;
+      if(ts.length>0){tgt=ts[Math.floor(Math.random()*ts.length)];ti=S.p.field.indexOf(tgt);}
+      else if(S.p.field.length>0&&Math.random()<.55){ti=Math.floor(Math.random()*S.p.field.length);tgt=S.p.field[ti];}
+      if(tgt&&ti>=0){
+        if(atk.ef.includes('poison'))tgt.chp=0;else{hit(tgt,dmg);if(tgt.chp>0)hit(atk,tgt.catk);}
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
+        if(atk.ef.includes('cleave2')){S.p.field.forEach((c,ci)=>{if(c&&ci!==ti)hit(c,2);});}
+        atk.canAtk=false;log(`AI <span>${atk.n}</span>→<span>${tgt.n}</span>`);
+      }else{
+        if(S.p.heroDivine)S.p.heroDivine=false;else S.p.hp-=dmg;
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
+        atk.canAtk=false;parts(window.innerWidth/2,window.innerHeight*.75,'#ff4444',12);
+        log(`AI <span>${atk.n}</span>→영웅 ${dmg}피해`);
+      }
+    });
+    cleanDead('p');cleanDead('e');checkWin();updateUI();
+    if(started)beginMyTurn();
+  },1200);
+}
+function checkWin(){
+  if(S.e.hp<=0)showWin(true);
+  if(S.p.hp<=0)showWin(false);
+}
+function showWin(won){
+  started=false;
+  const o=document.getElementById('wo'),t=document.getElementById('wt'),s=document.getElementById('ws');
+  o.classList.remove('hidden');
+  if(won){t.textContent='⚔ 승리!';t.className='wt win';s.textContent='적 마법사를 물리쳤습니다!';}
+  else{t.textContent='💀 패배...';t.className='wt lose';s.textContent='다시 도전해보세요!';}
+  for(let i=0;i<5;i++)setTimeout(()=>parts(window.innerWidth/2,window.innerHeight/2,won?'#c9a227':'#ff4444',30),i*200);
+}
+function trigA(key){const d=AMAP[key]||AMAP.default;const x=window.innerWidth/2+(Math.random()-.5)*160;const y=window.innerHeight/2+(Math.random()-.5)*90;parts(x,y,d.c,d.n);}
+function parts(x,y,color,n){
+  const layer=document.getElementById('pl');
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');p.className='particle';
+    const s=3+Math.random()*7;
+    p.style.cssText=`width:${s}px;height:${s}px;background:${color};box-shadow:0 0 ${s}px ${color};left:${x}px;top:${y}px;--tx:${(Math.random()-.5)*200}px;--ty:${(Math.random()-1.2)*200}px;animation-duration:${.5+Math.random()*.7}s;animation-delay:${Math.random()*.12}s`;
+    layer.appendChild(p);setTimeout(()=>p.remove(),1300);
+  }
+}
+function updateUI(){
+  const p=S.p,e=S.e;
+  document.getElementById('phb').style.width=Math.max(0,(p.hp/p.maxHp)*100)+'%';
+  document.getElementById('pht').textContent=p.hp+' HP';
+  document.getElementById('ehb').style.width=Math.max(0,(e.hp/e.maxHp)*100)+'%';
+  document.getElementById('eht').textContent=e.hp+' HP';
+  document.getElementById('pdc').textContent=p.deck.length;
+  document.getElementById('edc').textContent=e.deck.length;
+  renderMana('pm',p.mn,p.mmn);renderMana('em',e.mn,e.mmn);
+  renderHand();renderEHand();renderField('p');renderField('e');
+}
+function renderMana(id,c,m){const el=document.getElementById(id);let h='';for(let i=0;i<m;i++)h+=`<div class="orb ${i<c?'on':'off'}"></div>`;el.innerHTML=h;}
+function renderHand(){
+  const h=document.getElementById('ph'),di=h.querySelector('.di');
+  h.innerHTML='';h.appendChild(di);
+  S.p.hand.forEach((card,i)=>{
+    const el=mkCard(card,'hand','p');
+    el.onclick=()=>onHand(i);
+    el.onmouseenter=ev=>showTT(ev,card);el.onmouseleave=hideTT;
+    h.appendChild(el);
+  });
+}
+function renderEHand(){
+  const h=document.getElementById('eh'),di=h.querySelector('.di');
+  h.innerHTML='';h.appendChild(di);
+  S.e.hand.forEach(()=>{
+    const el=document.createElement('div');el.className='card bk';
+    el.innerHTML='<div class="ci"><div class="bkp">🔮</div></div>';h.appendChild(el);
+  });
+}
+function renderField(who){
+  const fe=document.getElementById(who==='p'?'pf':'ef'),fl=fe.querySelector('.fl');
+  fe.innerHTML='';if(fl)fe.appendChild(fl);
+  S[who].field.forEach((card,i)=>{
+    const el=mkCard(card,'field',who);
+    if(who==='p'){
+      if(myTurn&&card.canAtk)el.classList.add('ca');
+      if(atkIdx===i)el.classList.add('sel');
+      el.onclick=()=>onFld(i);
+    }else{
+      if(atkIdx!==null)el.classList.add('atk');
+      el.onclick=()=>onEFld(i);
+    }
+    el.onmouseenter=ev=>showTT(ev,card);el.onmouseleave=hideTT;
+    fe.appendChild(el);
+  });
+}
+function mkCard(card,loc,who){
+  const el=document.createElement('div');
+  el.className=`card el-${card.e} rarity-${card.r}`;
+  if(loc==='hand'&&who==='p'&&myTurn&&S.p.mn>=card.c)el.classList.add('play');
+  const kws=card.ef.filter(e=>KW[e]).slice(0,3).map(e=>`<div class="kw kw-${e}">${KW[e]}</div>`).join('');
+  const ds2=card.ds?'<span style="color:#ffe066;font-size:.42rem">✦</span>':'';
+  const fr=card.frozen?'<span style="color:#80dfff;font-size:.42rem">❄</span>':'';
+  const st=card.t==='c'?`<div class="cs"><div class="sa">⚔${card.catk??card.a}</div><div class="gem"></div><div class="sh">${ds2}${fr}❤${card.chp??card.h}</div></div>`:'';
+  el.innerHTML=`<div class="ci"><div class="cc">${card.c}</div><div class="ca2"><div class="cab"></div><span style="position:relative;z-index:1">${card.m}</span></div><div class="cb"><div class="cn">${card.n}</div><div class="ct">${EL[card.e]||card.e}·${TP[card.t]||card.t}</div><div class="cd">${card.d}</div>${st}<div class="kwb">${kws}</div></div></div>`;
+  return el;
+}
+function onHand(idx){if(!myTurn)return;const card=S.p.hand[idx];if(!card)return;if(S.p.mn<card.c){notify('마나 부족! 💧');return;}if(card.t==='c'&&S.p.field.length>=7){notify('전장 꽉 참!');return;}playCard(idx);}
+function onFld(idx){if(!myTurn)return;const c=S.p.field[idx];if(!c)return;if(atkIdx===idx){atkIdx=null;}else{if(!c.canAtk){notify('공격 불가!');return;}atkIdx=idx;notify(`${c.n} 공격 준비!`);}updateUI();}
+function onEFld(idx){if(!myTurn||atkIdx===null){notify('내 미니언 선택 먼저!');return;}attack(atkIdx,'field',idx);}
+document.getElementById('ef').addEventListener('click',e=>{if(e.target.closest('.card'))return;if(!myTurn||atkIdx===null)return;attack(atkIdx,'hero',-1);});
+document.getElementById('eh').addEventListener('click',()=>{if(!myTurn||atkIdx===null)return;attack(atkIdx,'hero',-1);});
+function showTT(e,card){
+  const tt=document.getElementById('tt');
+  const bs=card.ef.map(ef=>`<span class="ttb">${KW[ef]||ef}</span>`).join('');
+  tt.innerHTML=`<div class="ttn">${card.m} ${card.n}</div><div class="ttd">${card.d}</div><div class="tts"><span>💧${card.c}</span>${card.t==='c'?`<span>⚔${card.catk??card.a}</span><span>❤${card.chp??card.h}</span>`:''}<span style="color:${RC[card.r]}">${RL[card.r]}</span></div><div class="tte">${bs}</div>`;
+  tt.className='tt vis';posTT(e);
+}
+function hideTT(){document.getElementById('tt').className='tt';}
+function posTT(e){const tt=document.getElementById('tt');let x=e.clientX+12,y=e.clientY-18;if(x+185>window.innerWidth)x=e.clientX-190;if(y+200>window.innerHeight)y=window.innerHeight-200;tt.style.left=x+'px';tt.style.top=y+'px';}
+document.addEventListener('mousemove',e=>{const tt=document.getElementById('tt');if(tt.classList.contains('vis'))posTT(e);});
+function notify(msg){const el=document.createElement('div');el.className='notif';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2600);}
+function log(html){document.getElementById('gl').innerHTML=html;}
+function setLS(msg){document.getElementById('lstat').textContent=msg;}
+function copyId(){if(!myId){notify('접속 중...');return;}navigator.clipboard.writeText(myId).then(()=>notify('ID 복사됨! 📋'));}
+// PeerJS
+function initPeer(){
+  peer=new Peer(undefined,{debug:0});
+  peer.on('open',id=>{myId=id;document.getElementById('pid').textContent=id;setLS('준비! ID를 공유하세요.');});
+  peer.on('connection',c=>{conn=c;setupConn(true);setLS('상대방 접속! 시작 중...');setTimeout(startMulti,700);});
+  peer.on('error',e=>setLS('오류: '+e.type));
+}
+function connect(){
+  const id=document.getElementById('oid').value.trim();if(!id){notify('ID 입력!');return;}
+  conn=peer.connect(id);setupConn(false);setLS('접속 중...');
+}
+function setupConn(isHost){
+  conn.on('open',()=>{setLS('접속됨!');if(!isHost)send({type:'hello',name:document.getElementById('mn').value||'마법사'});});
+  conn.on('data',d=>{
+    const msg=JSON.parse(d);
+    if(msg.type==='hello'){S.e.name=msg.name;document.getElementById('en').textContent=msg.name;if(isHost){send({type:'hello',name:document.getElementById('mn').value||'마법사'});startMulti();}}
+    else if(msg.type==='action')handleRemote(msg);
+    else if(msg.type==='endTurn')oppEndTurn();
+  });
+  conn.on('error',e=>setLS('오류: '+e));
+}
+function send(obj){if(conn&&conn.open)conn.send(JSON.stringify(obj));}
+function startMulti(){initGame();myTurn=true;beginMyTurn();}
+function playSolo(){soloMode=true;S.e.name='AI 아케인';initGame();myTurn=true;beginMyTurn();}
+window.addEventListener('DOMContentLoaded',()=>initPeer());
+</script>
+</body>
+</html>
