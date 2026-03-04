@@ -2,102 +2,106 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>⚔️ 비술의 격전</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 :root{--bg:#06080f;--bg2:#0d1120;--panel:#111827;--brd:#1e2d40;--gold:#c9a227;--gold2:#f0c040;--txt:#dde4ef;--dim:#6b7c9a;--fire:#ff4e1a;--water:#1ab8ff;--earth:#7ab83a;--wind:#a0e8e0;--shadow:#9b4dff;--light:#ffe066;--thunder:#f0e040;--ice:#80dfff;--nature:#50c060;--c1:#8fa0b0;--c2:#4da6ff;--c3:#cc44ff;--c4:#ffaa00}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden;user-select:none}
+body{background:var(--bg);color:var(--txt);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 0%,#0a1a3a 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 20% 100%,#0d0a1e 0%,transparent 50%),radial-gradient(ellipse 60% 40% at 80% 100%,#0a1808 0%,transparent 50%),var(--bg)}
 /* ─ SCREENS ─ */
-.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;overflow-y:auto;padding:12px 0}
 .screen.hidden{display:none}
 #lobby{background:linear-gradient(160deg,#0d1120,#06080f)}
-.logo{font-family:'Noto Serif KR',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:700;letter-spacing:.1em;background:linear-gradient(135deg,#c9a227,#fff8dc,#c9a227);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite}
+.logo{font-family:'Noto Serif KR',serif;font-size:clamp(1.6rem,6vw,3rem);font-weight:700;letter-spacing:.1em;background:linear-gradient(135deg,#c9a227,#fff8dc,#c9a227);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 18px #c9a22744)}50%{filter:drop-shadow(0 0 44px #c9a22799)}}
-.sub{color:var(--dim);font-size:.9rem;letter-spacing:.2em}
-.panel{background:rgba(17,24,39,.96);border:1px solid var(--brd);border-radius:14px;padding:28px 40px;width:min(460px,90vw);display:flex;flex-direction:column;gap:13px;box-shadow:0 0 50px #00000088,inset 0 1px 0 #ffffff0a}
+.sub{color:var(--dim);font-size:.85rem;letter-spacing:.15em}
+.panel{background:rgba(17,24,39,.96);border:1px solid var(--brd);border-radius:14px;padding:22px 28px;width:min(440px,92vw);display:flex;flex-direction:column;gap:12px;box-shadow:0 0 50px #00000088,inset 0 1px 0 #ffffff0a}
 .ig{display:flex;flex-direction:column;gap:4px}
-.ig label{font-size:.7rem;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
-input[type=text]{background:#06080f;border:1px solid var(--brd);border-radius:7px;color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:.88rem;padding:9px 13px;outline:none;transition:border-color .2s}
+.ig label{font-size:.68rem;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+input[type=text]{background:#06080f;border:1px solid var(--brd);border-radius:7px;color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:.88rem;padding:10px 13px;outline:none;transition:border-color .2s;width:100%}
 input[type=text]:focus{border-color:var(--gold)}
-.btn{font-family:'Noto Sans KR',sans-serif;font-size:.82rem;font-weight:700;padding:10px 20px;border-radius:7px;border:none;cursor:pointer;transition:all .2s}
+.btn{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;padding:11px 20px;border-radius:7px;border:none;cursor:pointer;transition:all .2s;width:100%}
 .bp{background:linear-gradient(135deg,#9a7a12,#c9a227,#dbb830);color:#1a1200;box-shadow:0 4px 18px #c9a22744}
-.bp:hover{transform:translateY(-2px);box-shadow:0 8px 28px #c9a22766}
+.bp:hover{transform:translateY(-1px);box-shadow:0 6px 24px #c9a22766}
+.bp:active{transform:scale(.98)}
 .bs{background:transparent;border:1px solid var(--brd);color:var(--dim)}
 .bs:hover{border-color:var(--gold);color:var(--gold)}
-.btn:active{transform:scale(.98)}
-.dv{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:.72rem}
+.dv{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:.7rem}
 .dv::before,.dv::after{content:'';flex:1;height:1px;background:var(--brd)}
-.smsg{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--gold);text-align:center;min-height:16px;animation:blnk .9s ease-in-out infinite}
+.smsg{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--gold);text-align:center;min-height:16px;animation:blnk .9s ease-in-out infinite}
 @keyframes blnk{50%{opacity:.4}}
-.pid{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--dim);text-align:center;padding:7px;background:#06080f;border-radius:5px;border:1px solid var(--brd);cursor:pointer;transition:border-color .2s;word-break:break-all}
+.pid{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);text-align:center;padding:8px 10px;background:#06080f;border-radius:6px;border:1px solid var(--brd);cursor:pointer;transition:border-color .2s;word-break:break-all;line-height:1.5}
 .pid:hover{border-color:var(--gold);color:var(--gold2)}
-/* ─ LOAD OVERLAY ─ */
+/* ─ LOAD ─ */
 #loadover{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 #loadover.hidden{display:none}
-.spinner{width:40px;height:40px;border:3px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+.spinner{width:38px;height:38px;border:3px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* ─ GAME ─ */
-#game{position:fixed;inset:0;z-index:5;display:grid;grid-template-rows:44px auto 1fr 34px 1fr auto 44px;gap:0;padding:5px}
+/* ─ GAME LAYOUT ─ */
+#game{position:fixed;inset:0;z-index:5;display:grid;grid-template-rows:50px auto 1fr 36px 1fr auto 50px;padding:3px}
 #game.hidden{display:none}
-.pi{display:flex;align-items:center;gap:9px;padding:3px 12px}
-.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:2px solid var(--brd);background:var(--panel);flex-shrink:0}
-.pnm{font-family:'Noto Serif KR',serif;font-size:.78rem;color:var(--gold);font-weight:700}
-.hpr{display:flex;align-items:center;gap:5px}
-.hpbar{width:100px;height:6px;background:#1a0a0a;border-radius:3px;overflow:hidden;border:1px solid #3a0000}
+/* ─ PLAYER INFO BARS (모바일 최적화) ─ */
+.pi{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:7px;padding:3px 10px;height:50px}
+.pi-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;border:2px solid var(--brd);background:var(--panel);flex-shrink:0}
+.pi-mid{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
+.pi-name{font-family:'Noto Serif KR',serif;font-size:.75rem;color:var(--gold);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-hprow{display:flex;align-items:center;gap:5px}
+.hpbar{flex:1;height:7px;background:#1a0a0a;border-radius:3px;overflow:hidden;border:1px solid #3a0000;min-width:60px}
 .hpfill{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,#c0392b,#e74c3c,#ff6b6b)}
-.hptx{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--txt)}
-.morbs{display:flex;gap:3px;margin-left:auto}
-.orb{width:12px;height:12px;border-radius:50%;border:1px solid #2a4080;transition:all .3s}
-.orb.on{background:radial-gradient(circle at 35% 35%,#7ad4ff,#1a7aff);box-shadow:0 0 5px #1a7aff88}
-.orb.off{background:#0a1030}
-.bf{display:flex;align-items:center;justify-content:center;gap:5px;padding:3px 12px;position:relative;min-height:100px}
+.hptx{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--txt);white-space:nowrap;flex-shrink:0}
+/* 마나 + 덱: 오른쪽 컬럼 */
+.pi-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.mana-txt{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#4da6ff;white-space:nowrap;font-weight:700}
+.deck-txt{font-size:.6rem;color:var(--dim);white-space:nowrap}
+/* ─ BATTLEFIELD ─ */
+.bf{display:flex;align-items:center;justify-content:center;gap:5px;padding:2px 10px;position:relative;overflow:visible}
 .bf.en{border-bottom:1px solid var(--brd)}
 .bf.pl{border-top:1px solid var(--brd)}
-.fl{position:absolute;right:12px;font-size:.6rem;color:var(--dim);opacity:.5}
-.cl{display:flex;align-items:center;padding:4px 16px;background:rgba(11,16,28,.92);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);gap:10px;z-index:3}
-.ti{font-family:'Noto Serif KR',serif;font-size:.72rem;color:var(--dim);font-weight:600;min-width:110px}
+.fl{position:absolute;right:10px;font-size:.58rem;color:var(--dim);opacity:.45}
+/* ─ CENTER BAR ─ */
+.cl{display:flex;align-items:center;padding:3px 12px;background:rgba(11,16,28,.95);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);gap:8px;z-index:3;height:36px}
+.ti{font-family:'Noto Serif KR',serif;font-size:.7rem;color:var(--dim);font-weight:600;flex-shrink:0;min-width:90px}
 .ti.on{color:var(--gold2);animation:pulse .9s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.5}}
-.bet{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:.72rem;padding:6px 16px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);color:#7aff7a;border:1px solid #2a6a2a;border-radius:5px;cursor:pointer;transition:all .2s}
-.bet:hover{background:linear-gradient(135deg,#2a5a2a,#3a8a3a);box-shadow:0 0 15px #00ff0033}
+.bet{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:.7rem;padding:5px 14px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);color:#7aff7a;border:1px solid #2a6a2a;border-radius:5px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.bet:hover{background:linear-gradient(135deg,#2a5a2a,#3a8a3a);box-shadow:0 0 12px #00ff0033}
 .bet:disabled{opacity:.3;cursor:not-allowed}
-.glog{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--dim);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.glog{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .glog span{color:var(--gold)}
-.ha{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:4px 12px 2px;min-height:130px;overflow-x:auto;flex-wrap:nowrap}
-.ha.eh{align-items:flex-start;padding:2px 12px 4px}
-.ha::-webkit-scrollbar{height:2px}
-.ha::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
-.di{display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--dim);flex-shrink:0;padding:3px}
-.di .de{font-size:1.2rem}
+/* ─ HAND ─ */
+.ha{display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:3px 10px 2px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ha.eh{align-items:flex-start;padding:2px 10px 3px}
+.ha::-webkit-scrollbar{display:none}
+.di{display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--dim);flex-shrink:0;padding:2px}
+.di .de{font-size:1.1rem}
 /* ─ CARDS ─ */
-.card{width:78px;border-radius:9px;border:1.5px solid transparent;background:var(--panel);cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s;position:relative;flex-shrink:0}
-.card.play{border-color:var(--gold);box-shadow:0 0 9px #c9a22744}
-.card.sel{border-color:#fff;box-shadow:0 0 16px #ffffff66;transform:translateY(-11px) scale(1.05)}
-.card.atk{border-color:#ff4444;box-shadow:0 0 9px #ff444444;animation:atkP .6s ease-in-out infinite}
-@keyframes atkP{50%{box-shadow:0 0 20px #ff444488}}
-.card.ca{border-color:#4af;box-shadow:0 0 9px #4af4}
-.card:hover:not(.bk){transform:translateY(-7px) scale(1.03)}
+.card{width:74px;border-radius:9px;border:1.5px solid transparent;background:var(--panel);cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,border-color .25s;position:relative;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.card.play{border-color:var(--gold);box-shadow:0 0 8px #c9a22755}
+.card.sel{border-color:#fff;box-shadow:0 0 14px #ffffff66;transform:translateY(-10px) scale(1.04)}
+.card.atk{border-color:#ff4444;box-shadow:0 0 8px #ff444455;animation:atkP .6s ease-in-out infinite}
+@keyframes atkP{50%{box-shadow:0 0 18px #ff444488}}
+.card.ca{border-color:#4af;box-shadow:0 0 8px #4af4}
+.card:hover:not(.bk){transform:translateY(-6px) scale(1.03)}
 .ci{border-radius:8px;overflow:hidden;position:relative}
-.cc{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7ad4ff,#1a7aff);border:1px solid #4af;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;color:#fff;z-index:2}
-.ca2{height:50px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;position:relative;overflow:hidden}
+.cc{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7ad4ff,#1a7aff);border:1px solid #4af;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;color:#fff;z-index:2}
+.ca2{height:48px;display:flex;align-items:center;justify-content:center;font-size:1.55rem;position:relative;overflow:hidden}
 .cab{position:absolute;inset:0;opacity:.28}
-.cb{padding:3px 5px 5px;background:rgba(0,0,0,.65)}
-.cn{font-family:'Noto Serif KR',serif;font-size:.44rem;font-weight:700;color:var(--gold2);text-align:center;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ct{font-size:.36rem;color:var(--dim);text-align:center;margin-bottom:2px}
-.cd{font-size:.38rem;color:var(--txt);text-align:center;line-height:1.3;min-height:20px;font-style:italic;word-break:keep-all}
-.cs2{display:flex;justify-content:space-between;align-items:center;margin-top:3px;padding-top:3px;border-top:1px solid #ffffff11}
-.sa{background:linear-gradient(135deg,#7a1a00,#c0392b);color:#ffcccc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700}
-.sh{background:linear-gradient(135deg,#003a00,#27ae60);color:#ccffcc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700}
+.cb{padding:3px 5px 4px;background:rgba(0,0,0,.65)}
+.cn{font-family:'Noto Serif KR',serif;font-size:.43rem;font-weight:700;color:var(--gold2);text-align:center;line-height:1.2;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct{font-size:.35rem;color:var(--dim);text-align:center;margin-bottom:1px}
+.cd{font-size:.37rem;color:var(--txt);text-align:center;line-height:1.3;min-height:18px;font-style:italic;word-break:keep-all}
+.cs2{display:flex;justify-content:space-between;align-items:center;margin-top:2px;padding-top:2px;border-top:1px solid #ffffff11}
+.sa{background:linear-gradient(135deg,#7a1a00,#c0392b);color:#ffcccc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:700}
+.sh{background:linear-gradient(135deg,#003a00,#27ae60);color:#ccffcc;border-radius:3px;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:700}
 .gem{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .kwb{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:2px}
-.kw{font-size:.33rem;padding:1px 3px;border-radius:2px;color:#fff;font-weight:700}
+.kw{font-size:.32rem;padding:1px 3px;border-radius:2px;color:#fff;font-weight:700}
 .kw-taunt{background:#7a1a00}.kw-charge{background:#004080}.kw-divine{background:#5a4a00}.kw-lifesteal{background:#4a004a}.kw-poison{background:#004a00}.kw-rush{background:#1a3a5a}.kw-reborn{background:#3a003a}
-.card.bk .ci{background:linear-gradient(135deg,#0d1a2e,#1a0d2e);height:105px;display:flex;align-items:center;justify-content:center}
-.bkp{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:repeating-linear-gradient(45deg,transparent,transparent 7px,rgba(100,80,30,.1) 7px,rgba(100,80,30,.1) 14px),linear-gradient(135deg,#0d1a2e,#1a0d2e);border-radius:7px}
+.card.bk .ci{background:linear-gradient(135deg,#0d1a2e,#1a0d2e);height:100px;display:flex;align-items:center;justify-content:center}
+.bkp{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(100,80,30,.1) 6px,rgba(100,80,30,.1) 12px),linear-gradient(135deg,#0d1a2e,#1a0d2e);border-radius:7px}
 /* element themes */
 .el-fire .cab{background:radial-gradient(circle,#ff4e1a44,#8b000044)}.el-fire .ci{border-top:2px solid var(--fire)}
 .el-water .cab{background:radial-gradient(circle,#1ab8ff33,#00407733)}.el-water .ci{border-top:2px solid var(--water)}
@@ -112,7 +116,7 @@ input[type=text]:focus{border-color:var(--gold)}
 .rarity-common .gem{background:var(--c1)}.rarity-rare .gem{background:var(--c2);box-shadow:0 0 3px var(--c2)}.rarity-epic .gem{background:var(--c3);box-shadow:0 0 4px var(--c3)}.rarity-legendary .gem{background:var(--c4);box-shadow:0 0 6px var(--c4);animation:gg 2s ease-in-out infinite}
 @keyframes gg{50%{box-shadow:0 0 12px var(--c4)}}
 .rarity-legendary.card{animation:lg 3s ease-in-out infinite}
-@keyframes lg{0%,100%{box-shadow:0 0 6px #ffaa0022}50%{box-shadow:0 0 18px #ffaa0044}}
+@keyframes lg{0%,100%{box-shadow:0 0 5px #ffaa0022}50%{box-shadow:0 0 16px #ffaa0044}}
 /* anim */
 @keyframes fb{0%,100%{box-shadow:0 0 7px var(--fire)}50%{box-shadow:0 0 36px var(--fire),0 0 70px var(--fire)44}}
 @keyframes ia{0%,100%{box-shadow:0 0 7px var(--ice)}50%{box-shadow:0 0 36px var(--ice),0 0 70px var(--ice)44}}
@@ -122,13 +126,12 @@ input[type=text]:focus{border-color:var(--gold)}
 @keyframes ea{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px) translateY(2px)}40%{transform:translateX(4px) translateY(-2px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 @keyframes na{0%,100%{box-shadow:0 0 7px var(--nature)}50%{box-shadow:0 0 36px var(--nature),0 0 70px var(--nature)44}}
 @keyframes ta{0%,100%{box-shadow:0 0 7px var(--thunder)}50%{box-shadow:0 0 36px var(--thunder),0 0 70px var(--thunder)66}}
-@keyframes aa{0%{transform:translateX(0) scale(1)}30%{transform:translateX(25px) scale(1.1)}60%{transform:translateX(-3px) scale(.97)}100%{transform:translateX(0) scale(1)}}
 /* particles */
 #pl{position:fixed;inset:0;pointer-events:none;z-index:100}
 .particle{position:absolute;border-radius:50%;pointer-events:none;animation:pf .8s ease-out forwards}
 @keyframes pf{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
 /* notif */
-.notif{position:fixed;top:65px;left:50%;transform:translateX(-50%);background:rgba(11,16,28,.97);border:1px solid var(--gold);border-radius:7px;padding:8px 20px;font-size:.82rem;font-weight:500;color:var(--gold2);z-index:200;animation:nfa 2.5s ease forwards;box-shadow:0 0 24px #c9a22733;pointer-events:none;white-space:nowrap}
+.notif{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:rgba(11,16,28,.97);border:1px solid var(--gold);border-radius:7px;padding:8px 18px;font-size:.82rem;font-weight:500;color:var(--gold2);z-index:200;animation:nfa 2.5s ease forwards;box-shadow:0 0 24px #c9a22733;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 @keyframes nfa{0%{opacity:0;transform:translateX(-50%) translateY(-7px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-7px)}}
 /* tooltip */
 .tt{position:fixed;z-index:500;background:rgba(11,16,28,.98);border:1px solid var(--gold);border-radius:9px;padding:9px 12px;width:180px;pointer-events:none;display:none;box-shadow:0 0 24px #00000088}
@@ -138,13 +141,18 @@ input[type=text]:focus{border-color:var(--gold)}
 .tts{font-family:'JetBrains Mono',monospace;font-size:.68rem;display:flex;gap:7px;flex-wrap:wrap;margin-bottom:3px}
 .tte{display:flex;gap:2px;flex-wrap:wrap}
 .ttb{font-size:.56rem;padding:2px 5px;border-radius:3px;background:#1a2a3a;color:var(--dim)}
-/* winner */
-#wo{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px}
+/* ─ WINNER OVERLAY ─ */
+#wo{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:20px}
 #wo.hidden{display:none}
-.wt{font-family:'Noto Serif KR',serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;animation:glow 1.5s ease-in-out infinite}
+.wt{font-family:'Noto Serif KR',serif;font-size:clamp(2.2rem,8vw,4.5rem);font-weight:900;animation:glow 1.5s ease-in-out infinite;text-align:center}
 .wt.win{background:linear-gradient(135deg,#c9a227,#fff8dc,#c9a227);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .wt.lose{color:#ff4444;-webkit-text-fill-color:#ff4444}
-.ws{font-size:.95rem;color:var(--dim)}
+.ws{font-size:.95rem;color:var(--dim);text-align:center}
+.wo-btns{display:flex;flex-direction:column;gap:10px;width:min(300px,90vw)}
+/* 재도전 상태 표시 */
+.rematch-status{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--dim);text-align:center;min-height:20px}
+.rematch-status.waiting{color:var(--gold);animation:blnk .9s ease-in-out infinite}
+.rematch-status.ready{color:#7aff7a}
 </style>
 </head>
 <body>
@@ -152,13 +160,11 @@ input[type=text]:focus{border-color:var(--gold)}
 <div id="pl"></div>
 <div class="tt" id="tt"></div>
 
-<!-- 카드 로딩 오버레이 -->
 <div id="loadover">
   <div class="spinner"></div>
   <div style="color:var(--dim);font-size:.85rem">카드 데이터 로딩 중...</div>
 </div>
 
-<!-- 로비 -->
 <div id="lobby" class="screen hidden">
   <div class="logo">⚔ 비술의 격전</div>
   <div class="sub">— 온라인 카드 배틀 —</div>
@@ -175,44 +181,64 @@ input[type=text]:focus{border-color:var(--gold)}
   </div>
 </div>
 
-<!-- 게임 보드 -->
 <div id="game" class="hidden">
+  <!-- 상대방 정보 -->
   <div class="pi">
-    <div class="av">🧙</div>
-    <div style="display:flex;flex-direction:column;gap:2px">
-      <div class="pnm" id="en">상대 마법사</div>
-      <div class="hpr"><div class="hpbar"><div class="hpfill" id="ehb" style="width:100%"></div></div><span class="hptx" id="eht">30 HP</span></div>
+    <div class="pi-av">🧙</div>
+    <div class="pi-mid">
+      <div class="pi-name" id="en">상대 마법사</div>
+      <div class="pi-hprow">
+        <div class="hpbar"><div class="hpfill" id="ehb" style="width:100%"></div></div>
+        <span class="hptx" id="eht">30HP</span>
+      </div>
     </div>
-    <div class="morbs" id="em"></div>
+    <div class="pi-right">
+      <div class="mana-txt" id="emtx">💧 0/0</div>
+      <div class="deck-txt">🃏 <span id="edc">0</span></div>
+    </div>
   </div>
-  <div class="ha eh" id="eh"><div class="di"><span class="de">🃏</span><span id="edc">0</span></div></div>
+
+  <div class="ha eh" id="eh"></div>
   <div class="bf en" id="ef"><span class="fl">⚔ 상대 전장</span></div>
+
   <div class="cl">
     <div class="ti" id="ti">대기 중...</div>
     <div class="glog" id="gl">게임 시작!</div>
     <button class="bet" id="bet" onclick="endTurn()" disabled>턴 종료 ↵</button>
   </div>
+
   <div class="bf pl" id="pf"><span class="fl">🛡 내 전장</span></div>
-  <div class="ha" id="ph"><div class="di"><span class="de">🃏</span><span id="pdc">0</span></div></div>
-  <div class="pi" style="flex-direction:row-reverse">
-    <div class="av">🧙</div>
-    <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-end">
-      <div class="pnm" id="pnd">나</div>
-      <div class="hpr"><span class="hptx" id="pht">30 HP</span><div class="hpbar"><div class="hpfill" id="phb" style="width:100%"></div></div></div>
+  <div class="ha" id="ph"></div>
+
+  <!-- 내 정보 -->
+  <div class="pi">
+    <div class="pi-av">🧙</div>
+    <div class="pi-mid">
+      <div class="pi-name" id="pnd">나</div>
+      <div class="pi-hprow">
+        <div class="hpbar"><div class="hpfill" id="phb" style="width:100%"></div></div>
+        <span class="hptx" id="pht">30HP</span>
+      </div>
     </div>
-    <div class="morbs" id="pm" style="margin-left:0;margin-right:auto"></div>
+    <div class="pi-right">
+      <div class="mana-txt" id="pmtx">💧 0/0</div>
+      <div class="deck-txt">🃏 <span id="pdc">0</span></div>
+    </div>
   </div>
 </div>
 
-<!-- 승패 -->
+<!-- 승패 오버레이 -->
 <div id="wo" class="hidden">
   <div class="wt" id="wt">승리!</div>
   <div class="ws" id="ws"></div>
-  <button class="btn bp" onclick="location.reload()">다시 플레이</button>
+  <div class="rematch-status" id="rmstat"></div>
+  <div class="wo-btns">
+    <button class="btn bp" id="btn-rematch" onclick="requestRematch()">🔄 재도전</button>
+    <button class="btn bs" id="btn-lobby" onclick="goLobby()">🏠 로비로 돌아가기</button>
+  </div>
 </div>
 
 <script>
-/* ══ 상수 ══ */
 const AMAP={fire:{c:"#ff4e1a",n:14},ice:{c:"#80dfff",n:14},shadow:{c:"#9b4dff",n:14},holy:{c:"#ffe066",n:18},lightning:{c:"#a0e8e0",n:12},earth:{c:"#7ab83a",n:10},nature:{c:"#50c060",n:12},thunder:{c:"#f0e040",n:12},default:{c:"#cccccc",n:6}};
 const KW={taunt:"도발",charge:"돌격",divine:"신성",lifesteal:"생명흡수",poison:"독",rush:"급습",reborn:"재탄생"};
 const EL={fire:"화염",water:"물",earth:"대지",wind:"바람",shadow:"어둠",light:"빛",thunder:"번개",ice:"얼음",nature:"자연"};
@@ -220,106 +246,90 @@ const TP={c:"크리처",s:"주문",a:"유물"};
 const RL={common:"일반",rare:"레어",epic:"에픽",legendary:"전설"};
 const RC={common:"#8fa0b0",rare:"#4da6ff",epic:"#cc44ff",legendary:"#ffaa00"};
 
-/* ══ 카드 DB — fetch로 로드 ══ */
-let DB = [];
-
-async function loadCards() {
-  try {
-    const res = await fetch('./cards.json');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    DB = await res.json();
-    console.log('카드 로드 완료:', DB.length, '장');
-  } catch(e) {
-    console.error('카드 로드 실패:', e);
-    notify('카드 데이터 로드 실패! 새로고침 해주세요.');
+let DB=[];
+async function loadCards(){
+  try{
+    const r=await fetch('./cards.json');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    DB=await r.json();
+    console.log('카드 로드:',DB.length,'장');
+  }catch(e){
+    console.error(e);
+    notify('카드 로드 실패! 새로고침 해주세요.');
   }
 }
 
-/* ══ 게임 상태 ══ */
-let peer, conn;
-let myId = null;
-let soloMode = false;
-let myTurn = false;
-let started = false;
-let atkIdx = null;
-let isHost = false;
-const MHP=30, MX=10, DSZ=25;
+/* ══ 상태 ══ */
+let peer,conn,myId=null;
+let soloMode=false,myTurn=false,started=false,atkIdx=null,isHost=false;
+let rematchSent=false,rematchReceived=false;
+const MHP=30,MX=10,DSZ=40;
 
-let S = {
+let S={
   p:{hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:[],hand:[],field:[],name:"나",heroDivine:false,heroAtk:0},
   e:{hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:[],hand:[],field:[],name:"상대",heroDivine:false,heroAtk:0}
 };
 
-/* ══ 덱 빌드 ══ */
+/* ══ 덱 (40장) ══ */
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 function buildDeck(){
   if(!DB.length){notify('카드 데이터 없음!');return[];}
-  const pool=[...DB], dk=[];
-  const need={legendary:1,epic:2,rare:5,common:8};
+  const pool=[...DB],dk=[];
+  const need={legendary:2,epic:4,rare:10,common:16};
   ['legendary','epic','rare','common'].forEach(r=>{
     const cs=pool.filter(c=>c.r===r);
     if(!cs.length)return;
-    while(dk.filter(c=>c.r===r).length<need[r]){
+    while(dk.filter(c=>c.r===r).length<need[r])
       dk.push(JSON.parse(JSON.stringify(cs[Math.floor(Math.random()*cs.length)])));
-    }
   });
   while(dk.length<DSZ)dk.push(JSON.parse(JSON.stringify(pool[Math.floor(Math.random()*pool.length)])));
   return shuffle(dk.slice(0,DSZ));
 }
 
-function prep(c){
-  c=JSON.parse(JSON.stringify(c));
-  c.chp=c.h; c.catk=c.a; c.canAtk=false; c.frozen=false; c.ds=false;
-  return c;
-}
+function prep(c){c=JSON.parse(JSON.stringify(c));c.chp=c.h;c.catk=c.a;c.canAtk=false;c.frozen=false;c.ds=false;return c;}
 
-/* ══ 게임 초기화 ══ */
+/* ══ 초기화 ══ */
 function initGame(){
   const name=document.getElementById('mn').value||'마법사';
   S.p={hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:buildDeck(),hand:[],field:[],name,heroDivine:false,heroAtk:0};
   S.e={hp:MHP,maxHp:MHP,mn:0,mmn:0,deck:buildDeck(),hand:[],field:[],name:S.e.name,heroDivine:false,heroAtk:0};
   document.getElementById('pnd').textContent=name;
   document.getElementById('en').textContent=S.e.name;
-  // 선공 4장, 후공 3장
-  for(let i=0;i<4;i++) drawCard('p');
+  for(let i=0;i<4;i++)drawCard('p');
   for(let i=0;i<3;i++){if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));}
   document.getElementById('lobby').classList.add('hidden');
+  document.getElementById('wo').classList.add('hidden');
   document.getElementById('game').classList.remove('hidden');
-  started=true; atkIdx=null;
+  started=true;atkIdx=null;rematchSent=false;rematchReceived=false;
 }
 
-/* ══ 드로우 ══ */
 function drawCard(who,n=1){
   for(let i=0;i<n;i++){
     const p=S[who];
-    if(!p.deck.length){notify(who==='p'?'덱이 비었습니다!':'상대 덱이 비었음');return;}
+    if(!p.deck.length){notify(who==='p'?'덱이 비었습니다!':'상대 덱 소진');return;}
     if(p.hand.length>=10){notify(who==='p'?'패가 꽉 찼습니다!':'상대 패 꽉 참');return;}
     p.hand.push(prep(p.deck.pop()));
   }
 }
 
-/* ══ 턴 관리 ══ */
+/* ══ 턴 ══ */
 function beginMyTurn(){
   myTurn=true;
-  S.p.mmn=Math.min(MX,S.p.mmn+1);
-  S.p.mn=S.p.mmn;
+  S.p.mmn=Math.min(MX,S.p.mmn+1);S.p.mn=S.p.mmn;
   drawCard('p');
   S.p.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
-  // regen 효과
   S.p.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>healH('p',2));
   S.p.field.filter(c=>c&&c.ef.includes('regen')).forEach(()=>S.p.field.forEach(c2=>{if(c2)c2.chp=Math.min(c2.h,c2.chp+1);}));
   document.getElementById('bet').disabled=false;
   document.getElementById('ti').textContent='⚔ 내 턴';
   document.getElementById('ti').classList.add('on');
-  notify('내 턴!');
-  log('내 턴 시작.');
-  updateUI();
+  notify('내 턴!');log('내 턴 시작.');updateUI();
 }
 
 function endTurn(){
   if(!myTurn)return;
-  myTurn=false; atkIdx=null;
+  myTurn=false;atkIdx=null;
   document.getElementById('bet').disabled=true;
   document.getElementById('ti').textContent='상대방 턴...';
   document.getElementById('ti').classList.remove('on');
@@ -329,59 +339,44 @@ function endTurn(){
 }
 
 function oppEndTurn(){
-  S.e.mmn=Math.min(MX,S.e.mmn+1);
-  S.e.mn=S.e.mmn;
+  S.e.mmn=Math.min(MX,S.e.mmn+1);S.e.mn=S.e.mmn;
   if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));
   S.e.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
   S.e.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>healH('e',2));
-  log('상대방 턴 종료.');
-  beginMyTurn();
+  log('상대방 턴 종료.');beginMyTurn();
 }
 
 /* ══ 카드 사용 ══ */
 function playCard(idx){
   if(!myTurn)return;
-  const card=S.p.hand[idx]; if(!card)return;
+  const card=S.p.hand[idx];if(!card)return;
   if(S.p.mn<card.c){notify('마나가 부족합니다! 💧');return;}
   if(card.t==='c'&&S.p.field.length>=7){notify('전장이 가득 찼습니다!');return;}
-  S.p.mn-=card.c;
-  S.p.hand.splice(idx,1);
+  S.p.mn-=card.c;S.p.hand.splice(idx,1);
   if(card.t==='c'){
     card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');
     card.ds=card.ef.includes('divine');
-    applyBC(card,'p');
-    applyAura(card,'p');
-    S.p.field.push(card);
-    trigA(card.an);
-    log(`<span>${card.n}</span> 소환!`);
-  }else if(card.t==='s'){
-    applySpell(card,'p');
-    trigA(card.an);
-    log(`<span>${card.n}</span> 시전!`);
-  }else if(card.t==='a'){
-    applyArtifact(card,'p');
-    trigA(card.an);
-    log(`<span>${card.n}</span> 장착!`);
-  }
-  if(!soloMode) send({type:'action',action:'play',card,idx});
-  cleanDead('p'); cleanDead('e');
-  checkWin(); updateUI(); atkIdx=null;
+    applyBC(card,'p');applyAura(card,'p');
+    S.p.field.push(card);trigA(card.an);log(`<span>${card.n}</span> 소환!`);
+  }else if(card.t==='s'){applySpell(card,'p');trigA(card.an);log(`<span>${card.n}</span> 시전!`);}
+  else if(card.t==='a'){applyArtifact(card,'p');trigA(card.an);log(`<span>${card.n}</span> 장착!`);}
+  if(!soloMode)send({type:'action',action:'play',card,idx});
+  cleanDead('p');cleanDead('e');checkWin();updateUI();atkIdx=null;
 }
 
-/* ══ 전투의 함성 ══ */
 function applyBC(card,who){
-  const en=who==='p'?'e':'p', ef=card.ef;
-  if(ef.includes('bc-heal1')) healH(who,1);
-  if(ef.includes('bc-heal6')) healH(who,6);
+  const en=who==='p'?'e':'p',ef=card.ef;
+  if(ef.includes('bc-heal1'))healH(who,1);
+  if(ef.includes('bc-heal6'))healH(who,6);
   if(ef.includes('bc-freeze1')&&S[en].field.length>0){S[en].field[0].frozen=true;S[en].field[0].canAtk=false;notify('빙결!');}
   if(ef.includes('bc-freeze-all')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
   if(ef.includes('bc-clear')){S[en].field=[];notify('전장 클리어!');}
   if(ef.includes('bc-aoe3')){aoe(en,3);notify('적 전체 3피해!');}
-  if(ef.includes('bc-aoe2')){aoe(en,2);}
+  if(ef.includes('bc-aoe2'))aoe(en,2);
   if(ef.includes('bc-divine-all')){S[who].field.forEach(c=>{if(c)c.ds=true;});notify('전체 신성!');}
   if(ef.includes('bc-rand3-2')){for(let i=0;i<2;i++){const t=randT(en);if(t)hit(t,3);}}
-  if(ef.includes('bc-resurrect')) notify('부활!');
-  if(ef.includes('bc-cost')) notify('주문 비용 1감소!');
+  if(ef.includes('bc-resurrect'))notify('부활!');
+  if(ef.includes('bc-cost'))notify('주문 비용 1감소!');
 }
 
 function applyAura(card,who){
@@ -389,16 +384,15 @@ function applyAura(card,who){
   if(card.ef.includes('aura-hp')){S[who].field.forEach(c=>{if(c&&c!==card)c.chp+=1;});}
 }
 
-/* ══ 주문 효과 ══ */
 function applySpell(card,who){
-  const en=who==='p'?'e':'p', ef=card.ef;
+  const en=who==='p'?'e':'p',ef=card.ef;
   if(ef.includes('dmg5')){if(S[en].field.length)hit(randT(en),5);else S[en].hp-=5;}
   if(ef.includes('dmg4')){if(S[en].field.length)hit(randT(en),4);else S[en].hp-=4;}
   if(ef.includes('dmg3')){if(S[en].field.length)hit(randT(en),3);else S[en].hp-=3;}
   if(ef.includes('dmg15')){const t=randT(en);if(t)hit(t,15);}
   if(ef.includes('aoe3')){aoe(en,3);S[en].hp-=3;}
   if(ef.includes('aoe5')){aoe(en,5);S[en].hp-=5;}
-  if(ef.includes('aoe-enemy4')) aoe(en,4);
+  if(ef.includes('aoe-enemy4'))aoe(en,4);
   if(ef.includes('aoe-all6')){aoe(who,6);aoe(en,6);S[who].hp-=6;S[en].hp-=6;}
   if(ef.includes('aoe-dmg2')){aoe(en,2);S[en].hp-=2;}
   if(ef.includes('aoe-heal2')){S[who].field.forEach(c=>{if(c)c.chp=Math.min(c.h,c.chp+2);});healH(who,2);}
@@ -406,35 +400,33 @@ function applySpell(card,who){
   if(ef.includes('heal10')){healH(who,10);notify('+10 회복!');}
   if(ef.includes('freeze1')){const t=randT(en);if(t){t.frozen=true;t.canAtk=false;}notify('빙결!');}
   if(ef.includes('freeze-all')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
-  if(ef.includes('freeze-all-enemy')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('적 전체 빙결!');}
-  if(ef.includes('exec3')) S[en].field.forEach(c=>{if(c&&c.chp<=3)c.chp=0;});
+  if(ef.includes('freeze-all-enemy')){S[en].field.forEach(c=>{if(c){c.frozen=true;c.canAtk=false;}});notify('전체 빙결!');}
+  if(ef.includes('exec3'))S[en].field.forEach(c=>{if(c&&c.chp<=3)c.chp=0;});
   if(ef.includes('destroy1')&&S[en].field.length){const i=Math.floor(Math.random()*S[en].field.length);S[en].field[i].chp=0;notify('파괴!');}
   if(ef.includes('destroy-all')){S[who].field=[];S[en].field=[];notify('전체 파괴!');}
   if(ef.includes('destroy-all-enemy')){S[en].field.forEach(c=>{if(c)c.chp=0;});notify('적 전체 파괴!');}
   if(ef.includes('hero-aoe5')){S[who].hp-=5;S[en].hp-=5;}
   if(ef.includes('hero-dmg8')){S[en].hp-=8;notify('영웅 8피해!');}
   if(ef.includes('buff-all3')){S[who].field.forEach(c=>{if(c){c.catk+=3;c.chp+=3;}});notify('+3/+3!');}
-  if(ef.includes('buff-all1')) S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});
+  if(ef.includes('buff-all1'))S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});
   if(ef.includes('chain4-3')){for(let i=0;i<3;i++){const t=randT(en);if(t)hit(t,4);else S[en].hp-=4;}}
   if(ef.includes('drain5')){const t=randT(en);if(t){hit(t,5);healH(who,5);}else{S[en].hp-=5;healH(who,5);}}
-  if(ef.includes('draw3')) drawCard(who,3);
-  if(ef.includes('resurrect3')) notify('3마리 부활!');
+  if(ef.includes('draw3'))drawCard(who,3);
   if(ef.includes('aoe-minions4')){S[who].field.forEach(c=>{if(c)hit(c,4);});S[en].field.forEach(c=>{if(c)hit(c,4);});}
   if(ef.includes('dmg6-frozen')){const t=randT(en);if(t){if(t.frozen)hit(t,6);else{t.frozen=true;t.canAtk=false;}}}
-  cleanDead(who); cleanDead(en);
+  cleanDead(who);cleanDead(en);
 }
 
 function applyArtifact(card,who){
   const ef=card.ef;
   if(ef.includes('hero-atk3')){S[who].heroAtk=3;notify('영웅 +3공격!');}
   if(ef.includes('hero-divine')){S[who].heroDivine=true;notify('영웅 신성!');}
-  if(ef.includes('draw3')) drawCard(who,3);
-  if(ef.includes('buff-all1')) S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});
+  if(ef.includes('draw3'))drawCard(who,3);
+  if(ef.includes('buff-all1'))S[who].field.forEach(c=>{if(c){c.catk+=1;c.chp+=1;}});
 }
 
-/* ══ 유틸 ══ */
 function hit(card,dmg){if(!card)return;if(card.ds){card.ds=false;return;}card.chp-=dmg;}
-function aoe(who,dmg){S[who].field.forEach(c=>{if(c)hit(c,dmg);});}
+function aoe(who,dmg){S[who].field.forEach(c=>{if(c)hit(c,dmg);})}
 function healH(who,amt){S[who].hp=Math.min(S[who].maxHp,S[who].hp+amt);}
 function randT(who){const f=S[who].field.filter(c=>c);return f.length?f[Math.floor(Math.random()*f.length)]:null;}
 
@@ -457,218 +449,263 @@ function attackTarget(ai,tw,ti2){
   const atk=S.p.field[ai];
   if(!atk||!atk.canAtk){notify('공격할 수 없습니다!');return;}
   const dmg=atk.catk;
-
   if(tw==='hero'){
-    const hasTaunt=S.e.field.some(c=>c&&c.ef.includes('taunt'));
-    if(hasTaunt){notify('도발 미니언이 막고 있습니다!');return;}
-    if(S.e.heroDivine){S.e.heroDivine=false;notify('신성 보호막 파괴!');}
+    const ht=S.e.field.some(c=>c&&c.ef.includes('taunt'));
+    if(ht){notify('도발 미니언이 막고 있습니다!');return;}
+    if(S.e.heroDivine){S.e.heroDivine=false;notify('신성 파괴!');}
     else S.e.hp-=dmg;
-    if(atk.ef.includes('lifesteal')) healH('p',dmg);
-    parts(window.innerWidth/2, window.innerHeight*.2,'#ff4444',14);
+    if(atk.ef.includes('lifesteal'))healH('p',dmg);
+    parts(window.innerWidth/2,window.innerHeight*.2,'#ff4444',14);
     log(`<span>${atk.n}</span> → 적 영웅 ${dmg}피해`);
   }else{
-    const tgt=S.e.field[ti2]; if(!tgt)return;
-    const hasTaunt=S.e.field.some((c,i)=>c&&c.ef.includes('taunt')&&i!==ti2);
-    if(hasTaunt&&!tgt.ef.includes('taunt')){notify('도발 미니언을 먼저 공격!');return;}
-    if(atk.ef.includes('poison')) tgt.chp=0;
-    else hit(tgt,dmg);
+    const tgt=S.e.field[ti2];if(!tgt)return;
+    const ht=S.e.field.some((c,i)=>c&&c.ef.includes('taunt')&&i!==ti2);
+    if(ht&&!tgt.ef.includes('taunt')){notify('도발 미니언을 먼저 공격!');return;}
+    if(atk.ef.includes('poison'))tgt.chp=0;else hit(tgt,dmg);
     if(tgt.chp>0){if(atk.ds)atk.ds=false;else hit(atk,tgt.catk);}
-    if(atk.ef.includes('lifesteal')) healH('p',dmg);
+    if(atk.ef.includes('lifesteal'))healH('p',dmg);
     if(atk.ef.includes('cleave2')){S.e.field.forEach((c,i)=>{if(c&&i!==ti2)hit(c,2);});}
     trigA(atk.an);
     log(`<span>${atk.n}</span> → <span>${tgt.n}</span>`);
   }
   atk.canAtk=false;
-  if(!soloMode) send({type:'action',action:'attack',ai,tw,ti2,dmg});
-  cleanDead('p'); cleanDead('e');
-  atkIdx=null; checkWin(); updateUI();
+  if(!soloMode)send({type:'action',action:'attack',ai,tw,ti2,dmg});
+  cleanDead('p');cleanDead('e');atkIdx=null;checkWin();updateUI();
 }
 
-/* ══ 원격 액션 처리 (게스트/호스트 모두) ══ */
+/* ══ 원격 액션 ══ */
 function handleRemote(msg){
   const {action}=msg;
   if(action==='play'){
     const card=msg.card;
-    card.chp=card.h; card.catk=card.a;
+    card.chp=card.h;card.catk=card.a;
     card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');
-    card.ds=card.ef.includes('divine'); card.frozen=false;
+    card.ds=card.ef.includes('divine');card.frozen=false;
     if(card.t==='c'){applyBC(card,'e');applyAura(card,'e');S.e.field.push(card);}
-    else if(card.t==='s') applySpell(card,'e');
-    else if(card.t==='a') applyArtifact(card,'e');
-    if(S.e.hand.length>0) S.e.hand.pop();
-    trigA(card.an);
-    log(`상대: <span>${card.n}</span>`);
+    else if(card.t==='s')applySpell(card,'e');
+    else if(card.t==='a')applyArtifact(card,'e');
+    if(S.e.hand.length>0)S.e.hand.pop();
+    trigA(card.an);log(`상대: <span>${card.n}</span>`);
   }else if(action==='attack'){
-    const {ai,tw,ti2,dmg}=msg, atk=S.e.field[ai];
+    const {ai,tw,ti2,dmg}=msg,atk=S.e.field[ai];
     if(!atk){updateUI();return;}
     if(tw==='hero'){
-      if(S.p.heroDivine){S.p.heroDivine=false;}
-      else S.p.hp-=dmg;
-      if(atk.ef.includes('lifesteal')) healH('e',dmg);
+      if(S.p.heroDivine)S.p.heroDivine=false;else S.p.hp-=dmg;
+      if(atk.ef.includes('lifesteal'))healH('e',dmg);
       parts(window.innerWidth/2,window.innerHeight*.75,'#ff4444',14);
       log(`상대 <span>${atk.n}</span> → 내 영웅 ${dmg}피해`);
     }else{
       const tgt=S.p.field[ti2];
       if(tgt){
-        if(atk.ef.includes('poison')) tgt.chp=0;
-        else hit(tgt,dmg);
-        if(tgt.chp>0) hit(atk,tgt.catk);
-        if(atk.ef.includes('lifesteal')) healH('e',dmg);
+        if(atk.ef.includes('poison'))tgt.chp=0;else hit(tgt,dmg);
+        if(tgt.chp>0)hit(atk,tgt.catk);
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
         if(atk.ef.includes('cleave2')){S.p.field.forEach((c,i)=>{if(c&&i!==ti2)hit(c,2);});}
       }
       trigA(atk.an);
     }
-    if(atk) atk.canAtk=false;
+    if(atk)atk.canAtk=false;
   }
-  cleanDead('p'); cleanDead('e');
-  checkWin(); updateUI();
+  cleanDead('p');cleanDead('e');checkWin();updateUI();
 }
 
-/* ══ AI 턴 ══ */
+/* ══ AI ══ */
 function aiTurn(){
-  S.e.mmn=Math.min(MX,S.e.mmn+1); S.e.mn=S.e.mmn;
-  if(S.e.deck.length) S.e.hand.push(prep(S.e.deck.pop()));
+  S.e.mmn=Math.min(MX,S.e.mmn+1);S.e.mn=S.e.mmn;
+  if(S.e.deck.length)S.e.hand.push(prep(S.e.deck.pop()));
   S.e.field.forEach(c=>{if(c){c.canAtk=true;if(c.frozen){c.frozen=false;c.canAtk=false;}}});
   S.e.field.filter(c=>c&&c.ef.includes('regen2')).forEach(()=>healH('e',2));
-
   let ch=true;
   while(ch){
     ch=false;
     const aff=S.e.hand.filter(c=>c&&c.c<=S.e.mn&&(c.t!=='c'||S.e.field.length<7)).sort((a,b)=>b.c-a.c);
-    if(!aff.length) break;
-    const card=aff[0]; const idx=S.e.hand.indexOf(card);
-    S.e.mn-=card.c; S.e.hand.splice(idx,1);
-    if(card.t==='c'){
-      card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');
-      card.ds=card.ef.includes('divine');
-      applyBC(card,'e'); applyAura(card,'e');
-      S.e.field.push(card);
-    }else if(card.t==='s') applySpell(card,'e');
-    else if(card.t==='a') applyArtifact(card,'e');
-    trigA(card.an);
-    log(`AI: <span>${card.n}</span>`);
-    cleanDead('p'); cleanDead('e');
-    ch=true;
+    if(!aff.length)break;
+    const card=aff[0];S.e.mn-=card.c;S.e.hand.splice(S.e.hand.indexOf(card),1);
+    if(card.t==='c'){card.canAtk=card.ef.includes('charge')||card.ef.includes('rush');card.ds=card.ef.includes('divine');applyBC(card,'e');applyAura(card,'e');S.e.field.push(card);}
+    else if(card.t==='s')applySpell(card,'e');
+    else if(card.t==='a')applyArtifact(card,'e');
+    trigA(card.an);log(`AI: <span>${card.n}</span>`);cleanDead('p');cleanDead('e');ch=true;
   }
   setTimeout(()=>{
     S.e.field.forEach((atk,i)=>{
-      if(!atk||!atk.canAtk) return;
+      if(!atk||!atk.canAtk)return;
       const dmg=atk.catk;
       const ts=S.p.field.filter(c=>c&&c.ef.includes('taunt'));
-      let tgt=null, ti=-1;
+      let tgt=null,ti=-1;
       if(ts.length){tgt=ts[Math.floor(Math.random()*ts.length)];ti=S.p.field.indexOf(tgt);}
       else if(S.p.field.length&&Math.random()<.55){ti=Math.floor(Math.random()*S.p.field.length);tgt=S.p.field[ti];}
       if(tgt&&ti>=0){
-        if(atk.ef.includes('poison')) tgt.chp=0;
-        else{hit(tgt,dmg);if(tgt.chp>0)hit(atk,tgt.catk);}
-        if(atk.ef.includes('lifesteal')) healH('e',dmg);
+        if(atk.ef.includes('poison'))tgt.chp=0;else{hit(tgt,dmg);if(tgt.chp>0)hit(atk,tgt.catk);}
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
         if(atk.ef.includes('cleave2')){S.p.field.forEach((c,ci)=>{if(c&&ci!==ti)hit(c,2);});}
-        atk.canAtk=false;
-        log(`AI <span>${atk.n}</span> → <span>${tgt.n}</span>`);
+        atk.canAtk=false;log(`AI <span>${atk.n}</span> → <span>${tgt.n}</span>`);
       }else{
-        if(S.p.heroDivine) S.p.heroDivine=false;
-        else S.p.hp-=dmg;
-        if(atk.ef.includes('lifesteal')) healH('e',dmg);
-        atk.canAtk=false;
-        parts(window.innerWidth/2,window.innerHeight*.75,'#ff4444',12);
+        if(S.p.heroDivine)S.p.heroDivine=false;else S.p.hp-=dmg;
+        if(atk.ef.includes('lifesteal'))healH('e',dmg);
+        atk.canAtk=false;parts(window.innerWidth/2,window.innerHeight*.75,'#ff4444',12);
         log(`AI <span>${atk.n}</span> → 영웅 ${dmg}피해`);
       }
     });
-    cleanDead('p'); cleanDead('e');
-    checkWin(); updateUI();
-    if(started) beginMyTurn();
+    cleanDead('p');cleanDead('e');checkWin();updateUI();
+    if(started)beginMyTurn();
   },1200);
 }
 
 /* ══ 승패 ══ */
 function checkWin(){
-  if(S.e.hp<=0) showWin(true);
-  if(S.p.hp<=0) showWin(false);
-}
-function showWin(won){
-  started=false;
-  document.getElementById('wo').classList.remove('hidden');
-  const t=document.getElementById('wt'), s=document.getElementById('ws');
-  if(won){t.textContent='⚔ 승리!';t.className='wt win';s.textContent='적 마법사를 물리쳤습니다!';}
-  else{t.textContent='💀 패배...';t.className='wt lose';s.textContent='다시 도전해보세요!';}
-  for(let i=0;i<5;i++) setTimeout(()=>parts(window.innerWidth/2,window.innerHeight/2,won?'#c9a227':'#ff4444',30),i*200);
+  if(!started)return;
+  if(S.e.hp<=0)showWin(true);
+  else if(S.p.hp<=0)showWin(false);
 }
 
-/* ══ 애니메이션 & 파티클 ══ */
-function trigA(key){
-  const d=AMAP[key]||AMAP.default;
-  parts(window.innerWidth/2+(Math.random()-.5)*160, window.innerHeight/2+(Math.random()-.5)*90, d.c, d.n);
+function showWin(won){
+  started=false;
+  document.getElementById('game').classList.add('hidden');
+  document.getElementById('wo').classList.remove('hidden');
+  const t=document.getElementById('wt'),s=document.getElementById('ws');
+  const rmBtn=document.getElementById('btn-rematch');
+  if(won){t.textContent='⚔ 승리!';t.className='wt win';s.textContent='적 마법사를 물리쳤습니다!';}
+  else{t.textContent='💀 패배...';t.className='wt lose';s.textContent='재도전하겠습니까?';}
+  document.getElementById('rmstat').textContent='';
+  // 솔로 모드면 재도전 버튼 = 즉시 재시작
+  if(soloMode){rmBtn.textContent='🔄 재도전';rmBtn.style.display='';}
+  else{rmBtn.textContent='🔄 재도전 요청';rmBtn.style.display='';}
+  for(let i=0;i<5;i++)setTimeout(()=>parts(window.innerWidth/2,window.innerHeight/2,won?'#c9a227':'#ff4444',30),i*200);
 }
-function parts(x,y,color,n){
-  const layer=document.getElementById('pl');
-  for(let i=0;i<n;i++){
-    const p=document.createElement('div'); p.className='particle';
-    const s=3+Math.random()*7;
-    p.style.cssText=`width:${s}px;height:${s}px;background:${color};box-shadow:0 0 ${s}px ${color};left:${x}px;top:${y}px;--tx:${(Math.random()-.5)*200}px;--ty:${(Math.random()-1.2)*200}px;animation-duration:${.5+Math.random()*.7}s;animation-delay:${Math.random()*.12}s`;
-    layer.appendChild(p);
-    setTimeout(()=>p.remove(),1300);
+
+/* ══ 재도전 시스템 ══ */
+function requestRematch(){
+  if(soloMode){
+    // AI 솔로: 즉시 게임 재시작 (같은 이름/설정 유지)
+    soloMode=true;
+    S.e.name='AI 아케인';
+    initGame();
+    beginMyTurn();
+    return;
+  }
+  // 멀티: 상대에게 재도전 요청 전송
+  if(rematchSent)return;
+  rematchSent=true;
+  send({type:'rematch'});
+  document.getElementById('rmstat').textContent='⏳ 상대방의 수락을 기다리는 중...';
+  document.getElementById('rmstat').className='rematch-status waiting';
+  document.getElementById('btn-rematch').disabled=true;
+
+  if(rematchReceived){
+    // 상대가 이미 요청해 놨으면 바로 시작
+    startRematch();
   }
 }
 
-/* ══ UI 렌더링 ══ */
+function handleRematchRequest(){
+  rematchReceived=true;
+  if(!started){
+    // 승패 화면에 있는 경우
+    document.getElementById('rmstat').textContent='✅ 상대방이 재도전을 요청했습니다!';
+    document.getElementById('rmstat').className='rematch-status ready';
+    if(rematchSent){
+      // 나도 이미 요청 → 둘 다 준비 완료
+      startRematch();
+    }
+  }
+}
+
+function startRematch(){
+  document.getElementById('rmstat').textContent='🎮 재도전 시작!';
+  setTimeout(()=>{
+    // 같은 연결 유지, 게임만 리셋
+    // 이전과 반대로 선/후공
+    const wasHost=isHost;
+    rematchSent=false;rematchReceived=false;
+    initGame();
+    if(wasHost){beginMyTurn();}
+    else{
+      myTurn=false;
+      document.getElementById('ti').textContent='상대방 턴...';
+      document.getElementById('ti').classList.remove('on');
+      document.getElementById('bet').disabled=true;
+      notify('상대방 선공!');log('재도전! 상대방 선공.');updateUI();
+    }
+  },800);
+}
+
+function goLobby(){
+  // 게임 화면 숨기고 로비로
+  started=false;myTurn=false;soloMode=false;atkIdx=null;
+  document.getElementById('wo').classList.add('hidden');
+  document.getElementById('game').classList.add('hidden');
+  document.getElementById('lobby').classList.remove('hidden');
+  // P2P 연결 유지 (재연결 없이 바로 가능)
+  document.getElementById('rmstat').textContent='';
+  document.getElementById('btn-rematch').disabled=false;
+}
+
+/* ══ 파티클/애니 ══ */
+function trigA(key){const d=AMAP[key]||AMAP.default;parts(window.innerWidth/2+(Math.random()-.5)*150,window.innerHeight/2+(Math.random()-.5)*80,d.c,d.n);}
+function parts(x,y,color,n){
+  const layer=document.getElementById('pl');
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');p.className='particle';
+    const s=3+Math.random()*7;
+    p.style.cssText=`width:${s}px;height:${s}px;background:${color};box-shadow:0 0 ${s}px ${color};left:${x}px;top:${y}px;--tx:${(Math.random()-.5)*200}px;--ty:${(Math.random()-1.2)*200}px;animation-duration:${.5+Math.random()*.7}s;animation-delay:${Math.random()*.12}s`;
+    layer.appendChild(p);setTimeout(()=>p.remove(),1300);
+  }
+}
+
+/* ══ UI ══ */
 function updateUI(){
-  const p=S.p, e=S.e;
+  const p=S.p,e=S.e;
   document.getElementById('phb').style.width=Math.max(0,(p.hp/p.maxHp)*100)+'%';
-  document.getElementById('pht').textContent=p.hp+' HP';
+  document.getElementById('pht').textContent=p.hp+'HP';
   document.getElementById('ehb').style.width=Math.max(0,(e.hp/e.maxHp)*100)+'%';
-  document.getElementById('eht').textContent=e.hp+' HP';
+  document.getElementById('eht').textContent=e.hp+'HP';
+  document.getElementById('pmtx').textContent='💧 '+p.mn+'/'+p.mmn;
+  document.getElementById('emtx').textContent='💧 '+e.mn+'/'+e.mmn;
   document.getElementById('pdc').textContent=p.deck.length;
   document.getElementById('edc').textContent=e.deck.length;
-  renderMana('pm',p.mn,p.mmn);
-  renderMana('em',e.mn,e.mmn);
-  renderHand(); renderEHand();
-  renderField('p'); renderField('e');
+  renderHand();renderEHand();renderField('p');renderField('e');
 }
-function renderMana(id,c,m){
-  const el=document.getElementById(id);
-  let h=''; for(let i=0;i<m;i++) h+=`<div class="orb ${i<c?'on':'off'}"></div>`;
-  el.innerHTML=h;
-}
+
 function renderHand(){
-  const h=document.getElementById('ph'), di=h.querySelector('.di');
-  h.innerHTML=''; h.appendChild(di);
+  const h=document.getElementById('ph');
+  h.innerHTML='';
   S.p.hand.forEach((card,i)=>{
     const el=mkCard(card,'hand','p');
     el.onclick=()=>onHand(i);
-    el.onmouseenter=ev=>showTT(ev,card); el.onmouseleave=hideTT;
+    el.onmouseenter=ev=>showTT(ev,card);el.onmouseleave=hideTT;
     h.appendChild(el);
   });
 }
 function renderEHand(){
-  const h=document.getElementById('eh'), di=h.querySelector('.di');
-  h.innerHTML=''; h.appendChild(di);
+  const h=document.getElementById('eh');
+  h.innerHTML='';
   S.e.hand.forEach(()=>{
-    const el=document.createElement('div'); el.className='card bk';
+    const el=document.createElement('div');el.className='card bk';
     el.innerHTML='<div class="ci"><div class="bkp">🔮</div></div>';
     h.appendChild(el);
   });
 }
 function renderField(who){
-  const fe=document.getElementById(who==='p'?'pf':'ef'), fl=fe.querySelector('.fl');
-  fe.innerHTML=''; if(fl) fe.appendChild(fl);
+  const fe=document.getElementById(who==='p'?'pf':'ef'),fl=fe.querySelector('.fl');
+  fe.innerHTML='';if(fl)fe.appendChild(fl);
   S[who].field.forEach((card,i)=>{
     const el=mkCard(card,'field',who);
     if(who==='p'){
-      if(myTurn&&card.canAtk) el.classList.add('ca');
-      if(atkIdx===i) el.classList.add('sel');
+      if(myTurn&&card.canAtk)el.classList.add('ca');
+      if(atkIdx===i)el.classList.add('sel');
       el.onclick=()=>onFld(i);
     }else{
-      if(atkIdx!==null) el.classList.add('atk');
+      if(atkIdx!==null)el.classList.add('atk');
       el.onclick=()=>onEFld(i);
     }
-    el.onmouseenter=ev=>showTT(ev,card); el.onmouseleave=hideTT;
+    el.onmouseenter=ev=>showTT(ev,card);el.onmouseleave=hideTT;
     fe.appendChild(el);
   });
 }
 function mkCard(card,loc,who){
   const el=document.createElement('div');
   el.className=`card el-${card.e} rarity-${card.r}`;
-  if(loc==='hand'&&who==='p'&&myTurn&&S.p.mn>=card.c) el.classList.add('play');
+  if(loc==='hand'&&who==='p'&&myTurn&&S.p.mn>=card.c)el.classList.add('play');
   const kws=card.ef.filter(e=>KW[e]).slice(0,3).map(e=>`<div class="kw kw-${e}">${KW[e]}</div>`).join('');
   const ds2=card.ds?'<span style="color:#ffe066;font-size:.42rem">✦</span>':'';
   const fr=card.frozen?'<span style="color:#80dfff;font-size:.42rem">❄</span>':'';
@@ -679,27 +716,26 @@ function mkCard(card,loc,who){
 
 /* ══ 인터랙션 ══ */
 function onHand(idx){
-  if(!myTurn) return;
-  const card=S.p.hand[idx]; if(!card) return;
+  if(!myTurn)return;
+  const card=S.p.hand[idx];if(!card)return;
   if(S.p.mn<card.c){notify('마나 부족! 💧');return;}
   if(card.t==='c'&&S.p.field.length>=7){notify('전장 꽉 참!');return;}
   playCard(idx);
 }
 function onFld(idx){
-  if(!myTurn) return;
-  const c=S.p.field[idx]; if(!c) return;
+  if(!myTurn)return;
+  const c=S.p.field[idx];if(!c)return;
   if(atkIdx===idx){atkIdx=null;}
   else{
-    if(!c.canAtk){notify('공격 불가! (이번 턴 대기)');return;}
-    atkIdx=idx; notify(`${c.n} 공격 준비! 대상 선택.`);
+    if(!c.canAtk){notify('이번 턴 공격 불가!');return;}
+    atkIdx=idx;notify(`${c.n} — 공격 대상 선택`);
   }
   updateUI();
 }
 function onEFld(idx){
-  if(!myTurn||atkIdx===null){notify('내 미니언을 먼저 선택하세요!');return;}
+  if(!myTurn||atkIdx===null){notify('내 미니언을 먼저 선택!');return;}
   attackTarget(atkIdx,'field',idx);
 }
-// 빈 전장/패 클릭 = 영웅 공격
 document.getElementById('ef').addEventListener('click',e=>{if(e.target.closest('.card'))return;if(!myTurn||atkIdx===null)return;attackTarget(atkIdx,'hero',-1);});
 document.getElementById('eh').addEventListener('click',()=>{if(!myTurn||atkIdx===null)return;attackTarget(atkIdx,'hero',-1);});
 
@@ -708,31 +744,25 @@ function showTT(e,card){
   const tt=document.getElementById('tt');
   const bs=card.ef.map(ef=>`<span class="ttb">${KW[ef]||ef}</span>`).join('');
   tt.innerHTML=`<div class="ttn">${card.m} ${card.n}</div><div class="ttd">${card.d}</div><div class="tts"><span>💧${card.c}</span>${card.t==='c'?`<span>⚔${card.catk??card.a}</span><span>❤${card.chp??card.h}</span>`:''}<span style="color:${RC[card.r]}">${RL[card.r]}</span></div><div class="tte">${bs}</div>`;
-  tt.className='tt vis'; posTT(e);
+  tt.className='tt vis';posTT(e);
 }
 function hideTT(){document.getElementById('tt').className='tt';}
 function posTT(e){
   const tt=document.getElementById('tt');
-  let x=e.clientX+12, y=e.clientY-18;
-  if(x+185>window.innerWidth) x=e.clientX-190;
-  if(y+200>window.innerHeight) y=window.innerHeight-200;
-  tt.style.left=x+'px'; tt.style.top=y+'px';
+  let x=e.clientX+12,y=e.clientY-18;
+  if(x+185>window.innerWidth)x=e.clientX-190;
+  if(y+200>window.innerHeight)y=window.innerHeight-200;
+  tt.style.left=x+'px';tt.style.top=y+'px';
 }
 document.addEventListener('mousemove',e=>{const tt=document.getElementById('tt');if(tt.classList.contains('vis'))posTT(e);});
 
-/* ══ 알림/로그 ══ */
-function notify(msg){
-  const el=document.createElement('div'); el.className='notif'; el.textContent=msg;
-  document.body.appendChild(el); setTimeout(()=>el.remove(),2600);
-}
+/* ══ 알림 ══ */
+function notify(msg){const el=document.createElement('div');el.className='notif';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2600);}
 function log(html){document.getElementById('gl').innerHTML=html;}
 function setLS(msg){document.getElementById('lstat').textContent=msg;}
-function copyId(){
-  if(!myId){notify('아직 접속 중입니다...');return;}
-  navigator.clipboard.writeText(myId).then(()=>notify('ID 복사됨! 📋'));
-}
+function copyId(){if(!myId){notify('접속 중...');return;}navigator.clipboard.writeText(myId).then(()=>notify('ID 복사됨! 📋'));}
 
-/* ══ PEERJS — 버그 수정: 호스트/게스트 모두 게임 시작 ══ */
+/* ══ PEERJS ══ */
 function initPeer(){
   peer=new Peer(undefined,{debug:0});
   peer.on('open',id=>{
@@ -740,70 +770,48 @@ function initPeer(){
     document.getElementById('pid').textContent=id;
     setLS('준비! ID를 상대방에게 공유하세요.');
   });
-  // 호스트: 상대방이 접속해 옴
   peer.on('connection',c=>{
-    conn=c; isHost=true;
+    conn=c;isHost=true;
     setLS('상대방 접속! 시작 중...');
-    conn.on('open',()=>{
-      // 호스트는 guest의 hello를 기다림
-    });
     conn.on('data',d=>{
       const msg=JSON.parse(d);
-      if(msg.type==='hello'){
-        // guest의 이름 수신 → 내 이름 전송 → 둘 다 게임 시작
-        S.e.name=msg.name;
-        send({type:'helloBack', name:document.getElementById('mn').value||'마법사'});
-        startAsHost();
-      }else if(msg.type==='action'){
-        handleRemote(msg);
-      }else if(msg.type==='endTurn'){
-        oppEndTurn();
-      }
+      if(msg.type==='hello'){S.e.name=msg.name;send({type:'helloBack',name:document.getElementById('mn').value||'마법사'});startAsHost();}
+      else if(msg.type==='action')handleRemote(msg);
+      else if(msg.type==='endTurn')oppEndTurn();
+      else if(msg.type==='rematch')handleRematchRequest();
     });
     conn.on('error',e=>setLS('오류: '+e));
   });
   peer.on('error',e=>setLS('연결 오류: '+e.type));
 }
 
-// 게스트: 호스트에게 접속
 function connect(){
   const id=document.getElementById('oid').value.trim();
   if(!id){notify('상대방 ID를 입력하세요!');return;}
-  conn=peer.connect(id);
-  isHost=false;
+  conn=peer.connect(id);isHost=false;
   setLS('접속 중...');
   conn.on('open',()=>{
     setLS('접속됨! 이름 전송 중...');
-    send({type:'hello', name:document.getElementById('mn').value||'마법사'});
+    send({type:'hello',name:document.getElementById('mn').value||'마법사'});
   });
   conn.on('data',d=>{
     const msg=JSON.parse(d);
-    if(msg.type==='helloBack'){
-      // 호스트 이름 수신 → 게스트도 게임 시작 (후공)
-      S.e.name=msg.name;
-      startAsGuest();
-    }else if(msg.type==='action'){
-      handleRemote(msg);
-    }else if(msg.type==='endTurn'){
-      oppEndTurn();
-    }
+    if(msg.type==='helloBack'){S.e.name=msg.name;startAsGuest();}
+    else if(msg.type==='action')handleRemote(msg);
+    else if(msg.type==='endTurn')oppEndTurn();
+    else if(msg.type==='rematch')handleRematchRequest();
   });
   conn.on('error',e=>setLS('오류: '+e));
 }
 
-function send(obj){if(conn&&conn.open) conn.send(JSON.stringify(obj));}
+function send(obj){if(conn&&conn.open)conn.send(JSON.stringify(obj));}
 
-// 호스트: 선공
 function startAsHost(){
-  S.e.name = S.e.name || '상대방';
-  initGame();
-  myTurn=false; // 먼저 beginMyTurn 호출 준비
-  beginMyTurn(); // 호스트가 선공
+  S.e.name=S.e.name||'상대방';
+  initGame();beginMyTurn();
 }
-
-// 게스트: 후공
 function startAsGuest(){
-  S.e.name = S.e.name || '호스트';
+  S.e.name=S.e.name||'호스트';
   initGame();
   myTurn=false;
   document.getElementById('ti').textContent='상대방 턴...';
@@ -813,23 +821,15 @@ function startAsGuest(){
   log('게임 시작! 상대방 선공.');
   updateUI();
 }
-
-// AI 솔로
 function playSolo(){
-  soloMode=true;
-  S.e.name='AI 아케인';
-  initGame();
-  beginMyTurn();
+  soloMode=true;S.e.name='AI 아케인';
+  initGame();beginMyTurn();
 }
 
-/* ══ 부트 — 카드 fetch 후 로비 표시 ══ */
-window.addEventListener('DOMContentLoaded', async ()=>{
-  // 카드 데이터 로드
+window.addEventListener('DOMContentLoaded',async()=>{
   await loadCards();
-  // 로딩 화면 숨기고 로비 표시
   document.getElementById('loadover').classList.add('hidden');
   document.getElementById('lobby').classList.remove('hidden');
-  // PeerJS 초기화
   initPeer();
 });
 </script>
